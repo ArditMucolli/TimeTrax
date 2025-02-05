@@ -28,7 +28,7 @@ const ProfileDetails = ({name, status, job, joined, points}) => {
         </View>
         <TouchableOpacity style={styles.exchangeButton}>
           <Text style={styles.exchangeText}>Exchange</Text>
-          <ArrowRight />
+          <ArrowRight stroke="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </View>
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   profilePictureWrapper: {
     position: 'absolute',
-    top: -60,
+    top: -55,
     alignSelf: 'center',
   },
   profileInfo: {
@@ -63,12 +63,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   statusRow: {
+    marginTop: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginTop: 10,
-    gap: 10,
+    gap: 15,
   },
   statusText: {
     fontSize: 14,
@@ -91,9 +91,10 @@ const styles = StyleSheet.create({
   separatorWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 8, // Adds spacing around the separator
+    marginHorizontal: 8,
   },
   pointsSection: {
+    marginTop: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

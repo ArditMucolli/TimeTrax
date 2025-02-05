@@ -10,7 +10,6 @@ const ArrowRight = props => (
     {...props}>
     <Path
       d="M9 18L15 12L9 6"
-      stroke="#FFFFFF"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
