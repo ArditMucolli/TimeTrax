@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import Activity from '../components/Activity'; // Import Activity component
 import CheckInIcon from '../assets/statusWidget/CheckIn'; // Example icon
 import CheckOutIcon from '../assets/statusWidget/CheckOut';
@@ -7,6 +7,7 @@ import CheckOutIcon from '../assets/statusWidget/CheckOut';
 const RecentActivity = () => {
   return (
     <View style={styles.container}>
+      <Text>Recent Activity</Text>
       <Activity
         Title="Check In"
         Date="2025-02-05"

@@ -38,6 +38,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 80,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+    shadowColor: '#B0B0B0',
+    shadowOffset: {width: 0, height: -6},
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 15,
   },
   container: {
     backgroundColor: '#FFFFFF',
@@ -45,7 +52,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     paddingVertical: 12,
-    elevation: 5,
     height: '100%',
   },
   iconButton: {
