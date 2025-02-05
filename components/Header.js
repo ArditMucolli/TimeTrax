@@ -14,7 +14,7 @@ const Header = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <TouchableOpacity>
+        <TouchableOpacity style={styles.sideIcon}>
           <HamburgerMenu width={22} height={22} />
         </TouchableOpacity>
 
@@ -41,16 +41,21 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+  },
+  sideIcon: {
+    width: 50,
   },
   title: {
     color: '#252525',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
+    flex: 1,
   },
   rightIcons: {
     flexDirection: 'row',
     gap: 10,
+    width: 50,
   },
 });
 
