@@ -15,7 +15,7 @@ const Header = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <TouchableOpacity>
-          <HamburgerMenu />
+          <HamburgerMenu width={22} height={22} />
         </TouchableOpacity>
 
         <Text style={styles.title}>Homepage</Text>
@@ -44,8 +44,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    color: 'black',
-    fontSize: 18,
+    color: '#252525',
+    fontSize: 16,
     fontWeight: 'bold',
   },
   rightIcons: {

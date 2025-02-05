@@ -7,7 +7,6 @@ const App = () => {
   return (
     <View style={styles.container}>
       <Header />
-      <View style={styles.content} />
       <Footer />
     </View>
   );

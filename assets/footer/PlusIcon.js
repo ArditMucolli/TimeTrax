@@ -3,8 +3,8 @@ import Svg, {G, Path, Defs} from 'react-native-svg';
 /* SVGR has dropped some elements not supported by react-native-svg: filter */
 const PlusIcon = props => (
   <Svg
-    width={39}
-    height={38}
+    width={40}
+    height={40}
     viewBox="0 0 39 38"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
