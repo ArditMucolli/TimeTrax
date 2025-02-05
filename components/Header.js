@@ -10,16 +10,14 @@ import Timer from '../assets/header/Timer';
 import HamburgerMenu from '../assets/header/HamburgerMenu';
 import Bell from '../assets/header/Bell';
 
-const Header = () => {
+const Header = ({Title}) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.sideIcon}>
           <HamburgerMenu width={22} height={22} />
         </TouchableOpacity>
-
-        <Text style={styles.title}>Homepage</Text>
-
+        <Text style={styles.title}>{Title}</Text>
         <View style={styles.rightIcons}>
           <TouchableOpacity>
             <Timer />

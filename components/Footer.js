@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import HomeIcon from '../assets/footer/HomeIcon';
 import CalendarIcon from '../assets/footer/CalendarIcon';
 import PlusIcon from '../assets/footer/PlusIcon';
@@ -7,10 +8,13 @@ import SettingsIcon from '../assets/footer/SettingsIcon';
 import ProfileIcon from '../assets/footer/ProfileIcon';
 
 const Footer = () => {
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => navigation.navigate('Homepage')}>
           <HomeIcon />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton}>
@@ -22,7 +26,9 @@ const Footer = () => {
         <TouchableOpacity style={styles.iconButton}>
           <SettingsIcon />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => navigation.navigate('Profile')}>
           <ProfileIcon />
         </TouchableOpacity>
       </View>
