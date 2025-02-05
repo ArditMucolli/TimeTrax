@@ -48,15 +48,17 @@ const ProfileScreen = () => {
           <Text style={styles.infoValue}>12</Text>
         </View>
       </View>
-      <View style={styles.myPayslipRow}>
-        <PayslipIcon />
-        <Text style={styles.myPayslipLabel}>My Payslip</Text>
-        <ArrowRight stroke="#979797" />
-      </View>
-      <View style={styles.reimbursementRow}>
-        <Reimbursement />
-        <Text style={styles.reimbursementLabel}>Reimbursement</Text>
-        <ArrowRight stroke="#979797" />
+      <View style={styles.actionRowsContainer}>
+        <View style={styles.myPayslipRow}>
+          <PayslipIcon />
+          <Text style={styles.myPayslipLabel}>My Payslip</Text>
+          <ArrowRight stroke="#979797" />
+        </View>
+        <View style={styles.reimbursementRow}>
+          <Reimbursement />
+          <Text style={styles.reimbursementLabel}>Reimbursement</Text>
+          <ArrowRight stroke="#979797" />
+        </View>
       </View>
     </View>
   );
@@ -126,27 +128,36 @@ const styles = StyleSheet.create({
   separator: {
     width: 1,
     backgroundColor: '#979797',
-    height: '50%',
+    height: '40%',
     marginVertical: 12,
+  },
+  actionRowsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
   },
   myPayslipRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: 330, // Set the width
-    height: 62, // Set the height
-    backgroundColor: 'transparent', // Set background to transparent
+    width: 330,
+    height: 62,
+    backgroundColor: 'transparent',
     paddingHorizontal: 16,
-    marginBottom: 16, // Space between the rows
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#D9D9D9',
+    borderRadius: 8,
   },
 
-  // Label style for My Payslip
   myPayslipLabel: {
     fontSize: 16,
     fontWeight: '600',
     color: '#3A3A3A',
     marginLeft: 8,
+    flex: 1,
   },
+
   reimbursementRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -156,12 +167,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     paddingHorizontal: 16,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#D9D9D9',
+    borderRadius: 8,
   },
+
   reimbursementLabel: {
     fontSize: 16,
     fontWeight: '600',
     color: '#3A3A3A',
     marginLeft: 8,
+    flex: 1,
   },
   PayslipIcon: {
     width: 24,
