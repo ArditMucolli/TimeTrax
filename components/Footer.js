@@ -32,9 +32,12 @@ const Footer = () => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    flex: 1,
-    justifyContent: 'flex-end',
     backgroundColor: '#F1F5FF',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 80,
   },
   container: {
     backgroundColor: '#FFFFFF',
@@ -43,8 +46,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     elevation: 5,
+    height: '100%',
   },
-  iconButton: {},
+  iconButton: {
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   plusButton: {
     marginBottom: 10,
   },
