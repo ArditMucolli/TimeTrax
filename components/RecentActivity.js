@@ -8,7 +8,7 @@ import StartOvertime from '../assets/statusWidget/StartOvertime';
 const RecentActivity = () => {
   return (
     <View style={styles.container}>
-      <Text>Recent Activity</Text>
+      <Text style={styles.text}>Recent Activity</Text>
       <Activity
         Title="Check In"
         Date="22 Jan 2025"
@@ -49,6 +49,22 @@ const RecentActivity = () => {
         Points="+100pt"
         Icon={<CheckOutIcon width={34} height={34} />}
       />
+      <Activity
+        Title="Check Out"
+        Date="2025-02-05"
+        Time="05:30 pm"
+        Status="On Time"
+        Points="+100pt"
+        Icon={<CheckOutIcon width={34} height={34} />}
+      />
+      <Activity
+        Title="Check Out"
+        Date="2025-02-05"
+        Time="05:30 pm"
+        Status="On Time"
+        Points="+100pt"
+        Icon={<CheckOutIcon width={34} height={34} />}
+      />
     </View>
   );
 };
@@ -57,6 +73,12 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     padding: 20,
+  },
+  text: {
+    fontSize: 16,
+    padding: 10,
+    color: '#041F4E',
+    fontWeight: 600,
   },
 });
 

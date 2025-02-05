@@ -9,7 +9,6 @@ const Homepage = () => {
       <View style={styles.widgetSection}>
         <HomepageWidget />
       </View>
-
       <View style={styles.activitySection}>
         <RecentActivity />
       </View>
@@ -25,7 +24,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   widgetSection: {
-    padding: 15,
+    padding: 0,
   },
 });
 
