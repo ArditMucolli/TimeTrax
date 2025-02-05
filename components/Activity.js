@@ -29,20 +29,20 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 10,
     padding: 10,
-    flexDirection: 'row', // Align left and right content horizontally
-    justifyContent: 'space-between', // Space between the left and right content
-    alignItems: 'center', // Ensures vertical alignment
-    overflow: 'hidden', // Prevents overflow issues
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    overflow: 'hidden',
   },
   iconTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1, // Allows the left section to take available space
+    flex: 1,
   },
   titleDateContainer: {
     gap: 7,
     marginLeft: 8,
-    flex: 1, // Take up remaining space for title and date
+    flex: 1,
   },
   activityTitle: {
     color: '#252525',
@@ -54,26 +54,26 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   statusPointsContainer: {
-    flexDirection: 'column', // Align time, status, and points vertically
-    alignItems: 'flex-end', // Align to the right
+    flexDirection: 'column',
+    alignItems: 'flex-end',
     justifyContent: 'flex-start',
-    marginLeft: 10, // Prevents content from overflowing the container
+    marginLeft: 10,
   },
   activityTime: {
     color: '#252525',
     fontSize: 16,
-    fontWeight: '800', // ExtraBold
-    marginBottom: 4, // Space between time and status/points
+    fontWeight: '800',
+    marginBottom: 4,
   },
   statusRow: {
-    flexDirection: 'row', // Align status and points on the same row
-    justifyContent: 'flex-end', // Align both text elements to the right
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   activityStatus: {
     color: '#979797',
     fontSize: 11,
-    fontWeight: '600', // SemiBold
-    marginRight: 8, // Space between status and points
+    fontWeight: '600',
+    marginRight: 8,
   },
   activityPoints: {
     color: '#31B073',
