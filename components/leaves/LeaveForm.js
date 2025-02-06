@@ -33,6 +33,20 @@ const LeaveForm = ({
     year: 'numeric',
   });
 
+  const calculateDaysDifference = selectedDate => {
+    const currentDate = new Date();
+    const diffTime = selectedDate - currentDate;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  const numberOfDays = calculateDaysDifference(selectedDate);
+
+  const dayText = numberOfDays === 1 ? 'Day' : 'Days';
+
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
   return (
     <View style={styles.container}>
       <View style={styles.section}>
@@ -71,10 +85,13 @@ const LeaveForm = ({
           mode="date"
           onConfirm={handleDateChange}
           onCancel={() => setOpen(false)}
+          minimumDate={tomorrow} // Disable past dates and set minimum date to tomorrow
         />
       )}
       <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Apply for 5 Days Leave</Text>
+        <Text style={styles.buttonText}>
+          Apply for {numberOfDays} {dayText} Leave
+        </Text>
       </TouchableOpacity>
       <LeaveTypeModal
         modalVisible={modalVisible}
