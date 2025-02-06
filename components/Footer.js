@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native'; // Import useNavigation
 import HomeIcon from '../assets/footer/HomeIcon';
 import CalendarIcon from '../assets/footer/CalendarIcon';
 import PlusIcon from '../assets/footer/PlusIcon';
@@ -9,27 +9,40 @@ import ProfileIcon from '../assets/footer/ProfileIcon';
 
 const Footer = () => {
   const navigation = useNavigation();
+  const [activeTab, setActiveTab] = useState('Homepage');
+
+  const handlePress = (tabName, screenName) => {
+    setActiveTab(tabName);
+    navigation.navigate(screenName);
+  };
+
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
         <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => navigation.navigate('Homepage')}>
-          <HomeIcon />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <CalendarIcon />
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.iconButton, styles.plusButton]}>
-          <PlusIcon />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <SettingsIcon />
+          style={[styles.iconButton]}
+          onPress={() => handlePress('Homepage', 'Homepage')}>
+          <HomeIcon fill={activeTab === 'Homepage' ? '#041F4E' : 'none'} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.iconButton}
-          onPress={() => navigation.navigate('Profile')}>
-          <ProfileIcon />
+          onPress={() => handlePress('Calendar', 'Calendar')}>
+          <CalendarIcon />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.iconButton, styles.plusButton]}
+          onPress={() => handlePress('Plus', 'Plus')}>
+          <PlusIcon />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => handlePress('Settings', 'Settings')}>
+          <SettingsIcon />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.iconButton]}
+          onPress={() => handlePress('Profile', 'Profile')}>
+          <ProfileIcon fill={activeTab === 'Profile' ? '#041F4E' : 'none'} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
