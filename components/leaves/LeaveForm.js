@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import LeaveTypeModal from './LeaveTypeModal';
 import ArrowDown from '../../assets/ArrowDown';
+import DatePicker from 'react-native-date-picker';
+import CalendarIcon from '../../assets/footer/CalendarIcon';
 
 const LeaveForm = ({
   leaveType,
@@ -17,10 +19,22 @@ const LeaveForm = ({
   handleSelectLeaveType,
 }) => {
   const [description, setDescription] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
+
+  const handleDateChange = date => {
+    setSelectedDate(date);
+    setOpen(false);
+  };
+
+  const formattedDate = selectedDate.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
   return (
     <View style={styles.container}>
-      {/* Leave Type Section */}
       <View style={styles.section}>
         <Text style={styles.label}>Type</Text>
         <TouchableOpacity
@@ -30,7 +44,6 @@ const LeaveForm = ({
           <ArrowDown />
         </TouchableOpacity>
       </View>
-
       <View style={styles.section}>
         <Text style={styles.label}>Description</Text>
         <TextInput
@@ -41,17 +54,28 @@ const LeaveForm = ({
           multiline={true}
         />
       </View>
-
-      {/* Calendar Section */}
       <View style={styles.section}>
         <Text style={styles.label}>Calendar</Text>
+        <TouchableOpacity
+          style={styles.typeSelector}
+          onPress={() => setOpen(true)}>
+          <Text style={styles.value}>{formattedDate}</Text>
+          <CalendarIcon stroke="#979797" style={styles.calendarIcon} />
+        </TouchableOpacity>
       </View>
-
+      {open && (
+        <DatePicker
+          modal
+          open={open}
+          date={selectedDate}
+          mode="date"
+          onConfirm={handleDateChange}
+          onCancel={() => setOpen(false)}
+        />
+      )}
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Apply for 5 Days Leave</Text>
       </TouchableOpacity>
-
-      {/* Modal for Leave Type Selection */}
       <LeaveTypeModal
         modalVisible={modalVisible}
         leaveOptions={leaveOptions}
@@ -78,9 +102,10 @@ const styles = StyleSheet.create({
     color: '#252525',
   },
   value: {
-    fontSize: 14,
-    color: '#333',
-    marginTop: 5,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#979797',
+    flex: 1,
   },
   typeSelector: {
     paddingVertical: 10,
@@ -96,11 +121,14 @@ const styles = StyleSheet.create({
     width: 330,
     height: 50,
   },
+  calendarIcon: {
+    marginLeft: 10,
+  },
   input: {
     backgroundColor: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
-    color: '#252525',
+    color: '#979797',
     borderRadius: 10,
     padding: 10,
     width: 330,
@@ -110,15 +138,18 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   button: {
+    width: 330,
+    height: 55,
     backgroundColor: '#041F4E',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 70,
+    marginBottom: 50,
   },
   buttonText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
+    fontWeight: 700,
     fontSize: 16,
   },
 });

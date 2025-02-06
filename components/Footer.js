@@ -27,16 +27,17 @@ const Footer = () => {
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => handlePress('Leaves', 'Leaves')}>
-          <CalendarIcon fill={activeTab === 'Leaves' ? '#041F4E' : 'none'} />
+          <CalendarIcon
+            stroke="#041F4E"
+            fill={activeTab === 'Leaves' ? '#041F4E' : 'none'}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.iconButton, styles.plusButton]}
           onPress={() => handlePress('New Leave', 'New Leave')}>
           <PlusIcon />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => handlePress('Settings', 'Settings')}>
+        <TouchableOpacity style={styles.iconButton}>
           <SettingsIcon />
         </TouchableOpacity>
         <TouchableOpacity
