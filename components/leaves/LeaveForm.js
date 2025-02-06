@@ -1,5 +1,11 @@
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import LeaveTypeModal from './LeaveTypeModal';
 import ArrowDown from '../../assets/ArrowDown';
 
@@ -10,6 +16,8 @@ const LeaveForm = ({
   leaveOptions,
   handleSelectLeaveType,
 }) => {
+  const [description, setDescription] = useState('');
+
   return (
     <View style={styles.container}>
       {/* Leave Type Section */}
@@ -19,24 +27,26 @@ const LeaveForm = ({
           style={styles.typeSelector}
           onPress={() => setModalVisible(true)}>
           <Text style={styles.value}>{leaveType}</Text>
-          <ArrowDown />{' '}
-          {/* Assuming ArrowDown is the correct component for the down arrow */}
+          <ArrowDown />
         </TouchableOpacity>
       </View>
 
-      {/* Leave Description Section */}
       <View style={styles.section}>
         <Text style={styles.label}>Description</Text>
-        <Text style={styles.value}>Lorem ipsum</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter description"
+          value={description}
+          onChangeText={setDescription}
+          multiline={true}
+        />
       </View>
 
       {/* Calendar Section */}
       <View style={styles.section}>
         <Text style={styles.label}>Calendar</Text>
-        {/* Insert calendar component here */}
       </View>
 
-      {/* Apply Button */}
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Apply for 5 Days Leave</Text>
       </TouchableOpacity>
@@ -59,7 +69,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   section: {
-    marginBottom: 15,
+    marginBottom: 25,
   },
   label: {
     marginBottom: 5,
@@ -85,6 +95,19 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
     width: 330,
     height: 50,
+  },
+  input: {
+    backgroundColor: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#252525',
+    borderRadius: 10,
+    padding: 10,
+    width: 330,
+    height: 220,
+    borderColor: '#E5E7EB',
+    borderWidth: 1,
+    textAlignVertical: 'top',
   },
   button: {
     backgroundColor: '#041F4E',
