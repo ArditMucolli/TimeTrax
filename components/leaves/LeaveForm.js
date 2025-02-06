@@ -33,9 +33,9 @@ const LeaveForm = ({
     year: 'numeric',
   });
 
-  const calculateDaysDifference = selectedDate => {
+  const calculateDaysDifference = selectedCalendarDate => {
     const currentDate = new Date();
-    const diffTime = selectedDate - currentDate;
+    const diffTime = selectedCalendarDate - currentDate;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
