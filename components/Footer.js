@@ -22,13 +22,16 @@ const Footer = () => {
         <TouchableOpacity
           style={[styles.iconButton]}
           onPress={() => handlePress('Homepage', 'Homepage')}>
-          <HomeIcon fill={activeTab === 'Homepage' ? '#041F4E' : 'none'} />
+          <HomeIcon
+            stroke={activeTab === 'Homepage' ? '#fff' : '#041F4E'}
+            fill={activeTab === 'Homepage' ? '#041F4E' : 'none'}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => handlePress('Leaves', 'Leaves')}>
           <CalendarIcon
-            stroke="#041F4E"
+            stroke={activeTab === 'Leaves' ? '#fff' : '#041F4E'}
             fill={activeTab === 'Leaves' ? '#041F4E' : 'none'}
           />
         </TouchableOpacity>
