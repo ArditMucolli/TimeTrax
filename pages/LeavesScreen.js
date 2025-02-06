@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Header from '../components/Header';
+import LeavesTab from '../components/leaves/LeavesTab';
+import LeavesTable from '../components/leaves/LeavesTable';
 
 const LeavesScreen = () => {
   const [activeTab, setActiveTab] = useState('Leaves');
@@ -33,11 +35,7 @@ const LeavesScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.content}>
-        {activeTab === 'Leaves' ? (
-          <Text>Leaves View Content</Text>
-        ) : (
-          <Text>Table View Content</Text>
-        )}
+        {activeTab === 'Leaves' ? <LeavesTab /> : <LeavesTable />}
       </View>
     </View>
   );
@@ -47,7 +45,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F1F5FF',
-    padding: 16,
   },
   switchContainer: {
     flexDirection: 'row',
@@ -90,8 +87,6 @@ const styles = StyleSheet.create({
   content: {
     marginTop: 30,
     padding: 8,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
   },
 });
 
