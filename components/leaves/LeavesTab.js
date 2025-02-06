@@ -37,6 +37,8 @@ const LeavesTab = () => {
         status="Approved"
         dateRange="Mon, 1 May - Fri, 5 May"
         appliedBy="UTO"
+        statusColor="rgba(49, 176, 115, 0.2)"
+        statusTextColor="#31B073"
         arrowColor="#FFFFFF"
       />
       <LeavesContainer
@@ -44,6 +46,8 @@ const LeavesTab = () => {
         status="Approved"
         dateRange="Mon, 1 May - Fri, 5 May"
         appliedBy="UTO"
+        statusColor="rgba(49, 176, 115, 0.2)"
+        statusTextColor="#31B073"
         arrowColor="#FFFFFF"
       />
       <LeavesContainer
