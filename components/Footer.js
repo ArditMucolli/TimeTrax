@@ -31,7 +31,7 @@ const Footer = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.iconButton, styles.plusButton]}
-          onPress={() => handlePress('Plus', 'Plus')}>
+          onPress={() => handlePress('New Leave', 'New Leave')}>
           <PlusIcon />
         </TouchableOpacity>
         <TouchableOpacity
