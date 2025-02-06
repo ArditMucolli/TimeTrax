@@ -41,7 +41,7 @@ const LeaveTypeModal = ({
             <X width={24} height={24} color="#333" />
           </TouchableOpacity>
 
-          <Text style={styles.modalTitle}>Select Leave Type</Text>
+          <Text style={styles.modalTitle}>Select Type</Text>
           <FlatList
             data={leaveOptions}
             keyExtractor={item => item}
@@ -53,8 +53,11 @@ const LeaveTypeModal = ({
                   style={[
                     styles.radioButton,
                     selectedOption === item && styles.radioButtonSelected,
-                  ]}
-                />
+                  ]}>
+                  {selectedOption === item && (
+                    <View style={styles.radioButtonInner} />
+                  )}
+                </View>
                 <Text style={styles.optionText}>{item}</Text>
               </TouchableOpacity>
             )}
@@ -84,8 +87,9 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: '#041F4E',
+    fontSize: 16,
+    fontWeight: 700,
     marginBottom: 10,
   },
   optionContainer: {
@@ -98,26 +102,42 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#333',
+    borderColor: '#979797',
     marginRight: 15,
-  },
-  radioButtonSelected: {
-    backgroundColor: '#333',
-  },
-  optionText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  selectButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 12,
-    borderRadius: 5,
-    marginTop: 20,
+    justifyContent: 'center',
     alignItems: 'center',
   },
+  radioButtonSelected: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#1E5CD7',
+  },
+  radioButtonInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#1E5CD7',
+  },
+  optionText: {
+    fontSize: 14,
+    color: '#252525',
+    fontWeight: 700,
+  },
+  selectButton: {
+    backgroundColor: '#041F4E',
+    width: 330,
+    height: 55,
+    borderRadius: 5,
+    marginTop: 20,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   selectButtonText: {
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'center',
   },
   closeButton: {
     position: 'absolute',
