@@ -5,6 +5,7 @@ import Homepage from './pages/Homepage';
 import ProfileScreen from './pages/ProfileScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import LeavesScreen from './pages/LeavesScreen';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,7 @@ const App = () => {
           }}>
           <Stack.Screen name="Homepage" component={Homepage} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="Leaves" component={LeavesScreen} />
         </Stack.Navigator>
         <Footer />
       </View>
