@@ -7,6 +7,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import LeavesScreen from './pages/LeavesScreen';
 import NewLeaveScreen from './pages/NewLeaveScreen';
+import PayslipScreen from './pages/PayslipScreen';
 
 const Stack = createStackNavigator();
 
@@ -24,6 +25,7 @@ const App = () => {
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Leaves" component={LeavesScreen} />
           <Stack.Screen name="New Leave" component={NewLeaveScreen} />
+          <Stack.Screen name="Payslip" component={PayslipScreen} />
         </Stack.Navigator>
         <Footer />
       </View>

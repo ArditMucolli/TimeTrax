@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import ArrowLeft from '../assets/ArrowLeft';
@@ -10,6 +10,10 @@ import Reimbursement from '../assets/profile/Reimbursement';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
+
+  const navigateToScreen = screenName => {
+    navigation.navigate(screenName);
+  };
 
   return (
     <View style={styles.container}>
@@ -49,11 +53,13 @@ const ProfileScreen = () => {
         </View>
       </View>
       <View style={styles.actionRowsContainer}>
-        <View style={styles.myPayslipRow}>
+        <TouchableOpacity
+          style={styles.myPayslipRow}
+          onPress={() => navigateToScreen('Payslip')}>
           <PayslipIcon />
           <Text style={styles.myPayslipLabel}>My Payslip</Text>
           <ArrowRight stroke="#979797" />
-        </View>
+        </TouchableOpacity>
         <View style={styles.reimbursementRow}>
           <Reimbursement />
           <Text style={styles.reimbursementLabel}>Reimbursement</Text>
