@@ -64,6 +64,7 @@ const FilterScreen = () => {
             />
             <CalendarIcon stroke={'#979797'} />
           </TouchableOpacity>
+          <View style={styles.hr} />
         </View>
       </View>
       {open && (
@@ -113,6 +114,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center',
+    alignSelf: 'center',
     marginBottom: 20,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -128,6 +130,7 @@ const styles = StyleSheet.create({
   },
   dateContainer: {
     marginTop: 20,
+    alignSelf: 'center',
   },
   dateInputField: {
     flexDirection: 'row',
@@ -141,9 +144,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   label: {
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 14,
     marginBottom: 10,
+  },
+  hr: {
+    height: 1,
+    backgroundColor: '#DDDDDD',
+    marginVertical: 25,
   },
 });
 
