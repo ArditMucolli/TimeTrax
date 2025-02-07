@@ -11,11 +11,14 @@ const Footer = () => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('Homepage');
 
-  // Use navigationState to get the current route
-  const routeName = useNavigationState(state => state.routes[state.index].name);
+  const routeName = useNavigationState(state => {
+    if (state && state.routes && state.routes[state.index]) {
+      return state.routes[state.index].name;
+    }
+    return 'Homepage';
+  });
 
   useEffect(() => {
-    // Update activeTab whenever routeName changes
     setActiveTab(routeName);
   }, [routeName]); // Re-run effect when route changes
 

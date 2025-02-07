@@ -8,6 +8,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import LeavesScreen from './pages/LeavesScreen';
 import NewLeaveScreen from './pages/NewLeaveScreen';
 import PayslipScreen from './pages/PayslipScreen';
+import FilterScreen from './pages/FilterScreen';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ const App = () => {
           <Stack.Screen name="Leaves" component={LeavesScreen} />
           <Stack.Screen name="New Leave" component={NewLeaveScreen} />
           <Stack.Screen name="Payslip" component={PayslipScreen} />
+          <Stack.Screen name="Filter" component={FilterScreen} />
         </Stack.Navigator>
         <Footer />
       </View>
