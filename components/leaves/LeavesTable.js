@@ -1,10 +1,12 @@
 import React from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View, TouchableOpacity} from 'react-native';
 import {Table, Row, Rows} from 'react-native-table-component';
 import {leavesData} from '../../data/leavesData';
 import Filter from '../../assets/Filter';
+import {useNavigation} from '@react-navigation/native';
 
 const LeavesTable = () => {
+  const navigation = useNavigation();
   const tableHead = ['Name', 'Start Date', 'End Date', 'Check In'];
 
   const tableData = leavesData.map(item => [
@@ -14,10 +16,16 @@ const LeavesTable = () => {
     item.checkIn,
   ]);
 
+  const handleFilterPress = () => {
+    navigation.navigate('Filter');
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.filterContainer}>
-        <Filter />
+        <TouchableOpacity onPress={handleFilterPress}>
+          <Filter />
+        </TouchableOpacity>
       </View>
       <View style={styles.tableWrapper}>
         <Table borderStyle={{borderWidth: 1, borderColor: '#D1D5DB'}}>
@@ -28,11 +36,7 @@ const LeavesTable = () => {
           />
         </Table>
         <ScrollView style={styles.scrollableRows}>
-          <Table
-            borderStyle={{
-              borderWidth: 1,
-              borderColor: '#D1D5DB',
-            }}>
+          <Table borderStyle={{borderWidth: 1, borderColor: '#D1D5DB'}}>
             <Rows data={tableData} style={styles.row} textStyle={styles.cell} />
           </Table>
         </ScrollView>
