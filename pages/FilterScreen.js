@@ -6,6 +6,7 @@ import LeaveTypeModal from '../components/leaves/LeaveTypeModal';
 import SearchInput from '../components/filter/SearchInput';
 import DatePickerInput from '../components/filter/DatePickerInput ';
 import SelectOption from '../components/filter/SelectOption';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const FilterScreen = () => {
   const navigation = useNavigation();
@@ -15,6 +16,7 @@ const FilterScreen = () => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [isLeaveTypeModalVisible, setIsLeaveTypeModalVisible] = useState(false);
   const [isStatusModalVisible, setIsStatusModalVisible] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const leaveOptions = ['PTO', 'UTO'];
   const statusOptions = ['Pending', 'Approved', 'Rejected'];
@@ -25,6 +27,11 @@ const FilterScreen = () => {
 
   const handleDateChange = date => {
     setSelectedDate(date.toLocaleDateString('en-GB'));
+    setDatePickerVisibility(false);
+  };
+
+  const handleCancelDatePicker = () => {
+    setDatePickerVisibility(false);
   };
 
   const handleLeaveTypeSelect = selectedLeaveType => {
@@ -52,7 +59,7 @@ const FilterScreen = () => {
         />
         <DatePickerInput
           selectedDate={selectedDate}
-          handleDateChange={handleDateChange}
+          handleOpenDatePicker={() => setDatePickerVisibility(true)}
         />
         <SelectOption
           label="Choose Type"
@@ -81,6 +88,12 @@ const FilterScreen = () => {
         onSelectLeaveType={handleSelectStatus}
         onClose={() => setIsStatusModalVisible(false)}
         selectedLeaveType={selectedStatus}
+      />
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleDateChange}
+        onCancel={handleCancelDatePicker}
       />
     </View>
   );
