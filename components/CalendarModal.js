@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, Modal} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import {Calendar} from 'react-native-calendars';
 
 const CalendarModal = ({modalVisible, onClose, onSelectDate}) => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
 
-  const handleDateChange = (event, date) => {
-    if (date) {
-      setSelectedDate(date);
-    }
+  const handleDayPress = day => {
+    setSelectedDate(day.dateString);
   };
 
   const handleConfirm = () => {
-    onSelectDate(selectedDate);
+    if (selectedDate) {
+      onSelectDate(selectedDate);
+    }
     onClose();
   };
 
@@ -21,18 +21,27 @@ const CalendarModal = ({modalVisible, onClose, onSelectDate}) => {
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
           <Text style={styles.title}>Select Date</Text>
-          <DateTimePicker
-            value={selectedDate}
-            mode="date"
-            display="spinner"
-            onChange={handleDateChange}
+          <Calendar
+            current={selectedDate || new Date()}
+            minDate={'2020-05-10'}
+            onDayPress={handleDayPress}
+            markedDates={{
+              [selectedDate]: {selected: true, selectedColor: '#041F4E'},
+            }}
+            monthFormat={'yyyy MM'}
+            theme={{
+              selectedDayBackgroundColor: '#041F4E',
+              selectedDayTextColor: '#FFFFFF',
+              todayTextColor: '#041F4E',
+              arrowColor: '#041F4E',
+            }}
           />
           <View style={styles.buttons}>
             <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={handleConfirm}
+              onPress={handleConfirm} // Trigger onConfirm when the date is selected
               style={styles.confirmButton}>
               <Text style={styles.buttonText}>Confirm</Text>
             </TouchableOpacity>

@@ -6,7 +6,7 @@ import LeaveTypeModal from '../components/leaves/LeaveTypeModal';
 import SearchInput from '../components/filter/SearchInput';
 import DatePickerInput from '../components/filter/DatePickerInput ';
 import SelectOption from '../components/filter/SelectOption';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import CalendarModal from '../components/CalendarModal';
 
 const FilterScreen = () => {
   const navigation = useNavigation();
@@ -26,7 +26,9 @@ const FilterScreen = () => {
   };
 
   const handleDateChange = date => {
-    setSelectedDate(date.toLocaleDateString('en-GB'));
+    const formattedDate =
+      date instanceof Date ? date.toLocaleDateString('en-GB') : date;
+    setSelectedDate(formattedDate);
     setDatePickerVisibility(false);
   };
 
@@ -89,11 +91,10 @@ const FilterScreen = () => {
         onClose={() => setIsStatusModalVisible(false)}
         selectedLeaveType={selectedStatus}
       />
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleDateChange}
-        onCancel={handleCancelDatePicker}
+      <CalendarModal
+        modalVisible={isDatePickerVisible}
+        onClose={handleCancelDatePicker}
+        onSelectDate={handleDateChange} // Pass handleDateChange as onSelectDate
       />
     </View>
   );
