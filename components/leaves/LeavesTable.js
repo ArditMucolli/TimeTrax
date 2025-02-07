@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
   },
   tableWrapper: {
     borderTopLeftRadius: 15,
-    overflow: 'hidden',
   },
   header: {
     height: 40,
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
     fontWeight: 700,
   },
   scrollableRows: {
-    maxHeight: 500,
+    maxHeight: 450,
   },
   filterContainer: {
     marginBottom: 10,
