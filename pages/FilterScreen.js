@@ -9,16 +9,26 @@ import {
 import X from '../assets/X';
 import Search from '../assets/Search';
 import CalendarIcon from '../assets/footer/CalendarIcon';
+import DatePicker from 'react-native-date-picker';
 import {useNavigation} from '@react-navigation/native';
 
 const FilterScreen = () => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [open, setOpen] = useState(false);
 
   const handleBackPress = () => {
     navigation.goBack();
+  };
+
+  const handleDateChange = date => {
+    setSelectedDate(date.toLocaleDateString('en-GB')); // Set selected date
+    setOpen(false);
+  };
+
+  const handleOpenDatePicker = () => {
+    setOpen(true);
   };
 
   return (
@@ -43,34 +53,37 @@ const FilterScreen = () => {
         </View>
         <View style={styles.dateContainer}>
           <Text style={styles.label}>Change Date</Text>
-          <View style={styles.dateInput}>
-            <Text>From: </Text>
+          <TouchableOpacity
+            onPress={handleOpenDatePicker}
+            style={styles.dateInputField}>
             <TextInput
               style={styles.input}
-              placeholder="Select Start Date"
-              value={dateFrom}
-              onChangeText={setDateFrom}
+              placeholder="Select Date"
+              value={selectedDate}
+              editable={false}
             />
-          </View>
-          <View style={styles.dateInput}>
-            <Text>To: </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Select End Date"
-              value={dateTo}
-              onChangeText={setDateTo}
-            />
-          </View>
-          <CalendarIcon />
+            <CalendarIcon stroke={'#979797'} />
+          </TouchableOpacity>
         </View>
       </View>
+      {open && (
+        <DatePicker
+          modal
+          open={open}
+          date={selectedDate || new Date()}
+          mode="date"
+          onConfirm={handleDateChange}
+          onCancel={() => setOpen(false)}
+        />
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
+    backgroundColor: '#F1F5FF',
   },
   header: {
     flexDirection: 'row',
@@ -105,6 +118,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#D9D9D9',
     padding: 10,
+    borderRadius: 10,
   },
   input: {
     height: 45,
@@ -115,13 +129,20 @@ const styles = StyleSheet.create({
   dateContainer: {
     marginTop: 20,
   },
-  dateInput: {
+  dateInputField: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D9D9D9',
+    width: 330,
+    height: 45,
+    padding: 10,
+    borderRadius: 10,
   },
   label: {
-    fontWeight: 'bold',
+    fontWeight: 700,
+    fontSize: 14,
     marginBottom: 10,
   },
 });
