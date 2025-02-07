@@ -28,7 +28,6 @@ const NewLeaveScreen = () => {
         <Text style={styles.title}>New Leave</Text>
       </View>
 
-      {/* Leave Form Section */}
       <LeaveForm
         leaveType={leaveType}
         setModalVisible={setModalVisible}

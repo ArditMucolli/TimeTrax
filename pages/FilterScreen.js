@@ -1,34 +1,40 @@
 import React, {useState} from 'react';
-import {
-  Text,
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
-import X from '../assets/X';
-import Search from '../assets/Search';
-import CalendarIcon from '../assets/footer/CalendarIcon';
-import DatePicker from 'react-native-date-picker';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import X from '../assets/X';
+import LeaveTypeModal from '../components/leaves/LeaveTypeModal';
+import SearchInput from '../components/filter/SearchInput';
+import DatePickerInput from '../components/filter/DatePickerInput ';
+import SelectOption from '../components/filter/SelectOption';
 
 const FilterScreen = () => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
-  const [open, setOpen] = useState(false);
+  const [leaveType, setLeaveType] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [isLeaveTypeModalVisible, setIsLeaveTypeModalVisible] = useState(false);
+  const [isStatusModalVisible, setIsStatusModalVisible] = useState(false);
+
+  const leaveOptions = ['PTO', 'UTO'];
+  const statusOptions = ['Pending', 'Approved', 'Rejected'];
 
   const handleBackPress = () => {
     navigation.goBack();
   };
 
   const handleDateChange = date => {
-    setSelectedDate(date.toLocaleDateString('en-GB')); // Set selected date
-    setOpen(false);
+    setSelectedDate(date.toLocaleDateString('en-GB'));
   };
 
-  const handleOpenDatePicker = () => {
-    setOpen(true);
+  const handleLeaveTypeSelect = selectedLeaveType => {
+    setLeaveType(selectedLeaveType);
+    setIsLeaveTypeModalVisible(false);
+  };
+
+  const handleSelectStatus = status => {
+    setSelectedStatus(status);
+    setIsStatusModalVisible(false);
   };
 
   return (
@@ -40,43 +46,42 @@ const FilterScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.formContainer}>
-        <View style={styles.searchContainer}>
-          <View style={styles.searchIconWrapper}>
-            <Search />
-          </View>
-          <TextInput
-            style={styles.input}
-            placeholder="Search for file"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-        <View style={styles.dateContainer}>
-          <Text style={styles.label}>Change Date</Text>
-          <TouchableOpacity
-            onPress={handleOpenDatePicker}
-            style={styles.dateInputField}>
-            <TextInput
-              style={styles.input}
-              placeholder="Select Date"
-              value={selectedDate}
-              editable={false}
-            />
-            <CalendarIcon stroke={'#979797'} />
-          </TouchableOpacity>
-          <View style={styles.hr} />
-        </View>
-      </View>
-      {open && (
-        <DatePicker
-          modal
-          open={open}
-          date={selectedDate || new Date()}
-          mode="date"
-          onConfirm={handleDateChange}
-          onCancel={() => setOpen(false)}
+        <SearchInput
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
         />
-      )}
+        <DatePickerInput
+          selectedDate={selectedDate}
+          handleDateChange={handleDateChange}
+        />
+        <SelectOption
+          label="Choose Type"
+          selectedValue={leaveType}
+          setModalVisible={setIsLeaveTypeModalVisible}
+        />
+        <SelectOption
+          label="Choose Status"
+          selectedValue={selectedStatus}
+          setModalVisible={setIsStatusModalVisible}
+        />
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Done</Text>
+        </TouchableOpacity>
+      </View>
+      <LeaveTypeModal
+        modalVisible={isLeaveTypeModalVisible}
+        leaveOptions={leaveOptions}
+        onSelectLeaveType={handleLeaveTypeSelect}
+        onClose={() => setIsLeaveTypeModalVisible(false)}
+        selectedLeaveType={leaveType}
+      />
+      <LeaveTypeModal
+        modalVisible={isStatusModalVisible}
+        leaveOptions={statusOptions}
+        onSelectLeaveType={handleSelectStatus}
+        onClose={() => setIsStatusModalVisible(false)}
+        selectedLeaveType={selectedStatus}
+      />
     </View>
   );
 };
@@ -108,50 +113,21 @@ const styles = StyleSheet.create({
   formContainer: {
     padding: 30,
   },
-  searchContainer: {
+  button: {
     width: 330,
-    height: 45,
-    flexDirection: 'row',
-    gap: 10,
+    height: 55,
+    backgroundColor: '#041F4E',
+    padding: 15,
+    borderRadius: 10,
     alignItems: 'center',
     alignSelf: 'center',
-    marginBottom: 20,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#D9D9D9',
-    padding: 10,
-    borderRadius: 10,
+    marginTop: 250,
+    marginBottom: 50,
   },
-  input: {
-    height: 45,
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: 700,
     fontSize: 16,
-    color: '#979797',
-    flex: 1,
-  },
-  dateContainer: {
-    marginTop: 20,
-    alignSelf: 'center',
-  },
-  dateInputField: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#D9D9D9',
-    width: 330,
-    height: 45,
-    padding: 10,
-    borderRadius: 10,
-  },
-  label: {
-    fontWeight: '700',
-    fontSize: 14,
-    marginBottom: 10,
-  },
-  hr: {
-    height: 1,
-    backgroundColor: '#DDDDDD',
-    marginVertical: 25,
   },
 });
 

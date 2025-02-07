@@ -33,7 +33,6 @@ const LeaveTypeModal = ({
       onRequestClose={onClose}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          {/* Close Button (X icon) */}
           <TouchableOpacity
             style={styles.closeButton}
             onPress={onClose}
