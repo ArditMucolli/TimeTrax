@@ -9,61 +9,61 @@ import {
 import X from '../assets/X';
 import Search from '../assets/Search';
 import CalendarIcon from '../assets/footer/CalendarIcon';
-import {useNavigation} from '@react-navigation/native'; // Navigation hook
+import {useNavigation} from '@react-navigation/native';
 
 const FilterScreen = () => {
-  const navigation = useNavigation(); // Use navigation to go back
+  const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
 
   const handleBackPress = () => {
-    navigation.goBack(); // Go back to the previous screen when "X" is pressed
+    navigation.goBack();
   };
 
   return (
     <View style={styles.container}>
-      {/* Header with white background, "Filter" title in the center, and X button on the right */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Filter</Text>
         <TouchableOpacity onPress={handleBackPress} style={styles.closeButton}>
-          <X /> {/* X button to close */}
+          <X />
         </TouchableOpacity>
       </View>
 
-      {/* Search Section */}
-      <View style={styles.searchContainer}>
-        <Search />
-        <TextInput
-          style={styles.input}
-          placeholder="Search for file"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
-
-      {/* Date Selection Section */}
-      <View style={styles.dateContainer}>
-        <Text style={styles.label}>Change Date</Text>
-        <View style={styles.dateInput}>
-          <Text>From: </Text>
+      <View style={styles.formContainer}>
+        <View style={styles.searchContainer}>
+          <View style={styles.searchIconWrapper}>
+            <Search />
+          </View>
           <TextInput
             style={styles.input}
-            placeholder="Select Start Date"
-            value={dateFrom}
-            onChangeText={setDateFrom}
+            placeholder="Search for file"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
           />
         </View>
-        <View style={styles.dateInput}>
-          <Text>To: </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Select End Date"
-            value={dateTo}
-            onChangeText={setDateTo}
-          />
+        <View style={styles.dateContainer}>
+          <Text style={styles.label}>Change Date</Text>
+          <View style={styles.dateInput}>
+            <Text>From: </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Select Start Date"
+              value={dateFrom}
+              onChangeText={setDateFrom}
+            />
+          </View>
+          <View style={styles.dateInput}>
+            <Text>To: </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Select End Date"
+              value={dateTo}
+              onChangeText={setDateTo}
+            />
+          </View>
+          <CalendarIcon />
         </View>
-        <CalendarIcon /> {/* Calendar Icon for date picker */}
       </View>
     </View>
   );
@@ -71,16 +71,15 @@ const FilterScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F1F5FF',
-    flex: 1,
+    // flex: 1,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
-    padding: 10,
-    elevation: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
   headerText: {
     fontSize: 20,
@@ -88,22 +87,31 @@ const styles = StyleSheet.create({
     color: '#041F4E',
     flex: 1,
     textAlign: 'center',
+    marginLeft: 40,
   },
   closeButton: {
     padding: 10,
   },
+  formContainer: {
+    padding: 30,
+  },
   searchContainer: {
+    width: 330,
+    height: 45,
     flexDirection: 'row',
+    gap: 10,
     alignItems: 'center',
     marginBottom: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D9D9D9',
+    padding: 10,
   },
   input: {
+    height: 45,
+    fontSize: 16,
+    color: '#979797',
     flex: 1,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    marginLeft: 10,
   },
   dateContainer: {
     marginTop: 20,
