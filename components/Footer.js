@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
-import {useNavigation} from '@react-navigation/native'; // Import useNavigation
+import {useNavigation, useNavigationState} from '@react-navigation/native'; // Import useNavigationState
 import HomeIcon from '../assets/footer/HomeIcon';
 import CalendarIcon from '../assets/footer/CalendarIcon';
 import PlusIcon from '../assets/footer/PlusIcon';
@@ -10,6 +10,14 @@ import ProfileIcon from '../assets/footer/ProfileIcon';
 const Footer = () => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('Homepage');
+
+  // Use navigationState to get the current route
+  const routeName = useNavigationState(state => state.routes[state.index].name);
+
+  useEffect(() => {
+    // Update activeTab whenever routeName changes
+    setActiveTab(routeName);
+  }, [routeName]); // Re-run effect when route changes
 
   const handlePress = (tabName, screenName) => {
     setActiveTab(tabName);
