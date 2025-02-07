@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
-import {useNavigation, useNavigationState} from '@react-navigation/native'; // Import useNavigationState
+import {useNavigation, useNavigationState} from '@react-navigation/native';
 import HomeIcon from '../assets/footer/HomeIcon';
 import CalendarIcon from '../assets/footer/CalendarIcon';
 import PlusIcon from '../assets/footer/PlusIcon';
@@ -20,7 +20,7 @@ const Footer = () => {
 
   useEffect(() => {
     setActiveTab(routeName);
-  }, [routeName]); // Re-run effect when route changes
+  }, [routeName]);
 
   const handlePress = (tabName, screenName) => {
     setActiveTab(tabName);
