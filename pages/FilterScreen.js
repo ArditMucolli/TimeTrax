@@ -29,7 +29,6 @@ const FilterScreen = () => {
           <X />
         </TouchableOpacity>
       </View>
-
       <View style={styles.formContainer}>
         <View style={styles.searchContainer}>
           <View style={styles.searchIconWrapper}>
