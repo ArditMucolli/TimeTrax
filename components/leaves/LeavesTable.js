@@ -2,6 +2,7 @@ import React from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Table, Row, Rows} from 'react-native-table-component';
 import {leavesData} from '../../data/leavesData';
+import Filter from '../../assets/Filter';
 
 const LeavesTable = () => {
   const tableHead = ['Name', 'Start Date', 'End Date', 'Check In'];
@@ -15,6 +16,9 @@ const LeavesTable = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.filterContainer}>
+        <Filter />
+      </View>
       <View style={styles.tableWrapper}>
         <Table borderStyle={{borderWidth: 1, borderColor: '#D1D5DB'}}>
           <Row
@@ -69,6 +73,10 @@ const styles = StyleSheet.create({
   },
   scrollableRows: {
     maxHeight: 500,
+  },
+  filterContainer: {
+    marginBottom: 10,
+    marginLeft: 15,
   },
 });
 

@@ -1,10 +1,14 @@
 import React from 'react';
-import {ScrollView} from 'react-native'; // Import ScrollView
+import {ScrollView, View, StyleSheet} from 'react-native'; // Import View and StyleSheet
 import LeavesContainer from './LeavesContainer';
+import Filter from '../../assets/Filter';
 
 const LeavesTab = () => {
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.filterContainer}>
+        <Filter />
+      </View>
       <LeavesContainer
         monthText="February 2025"
         leaveTitle="5 Days Application"
@@ -60,5 +64,17 @@ const LeavesTab = () => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingBottom: 16,
+  },
+  filterContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 16,
+    zIndex: 1,
+  },
+});
 
 export default LeavesTab;
