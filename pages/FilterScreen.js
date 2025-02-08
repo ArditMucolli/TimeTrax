@@ -11,7 +11,8 @@ import CalendarModal from '../components/CalendarModal';
 const FilterScreen = () => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [leaveType, setLeaveType] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [isLeaveTypeModalVisible, setIsLeaveTypeModalVisible] = useState(false);
@@ -25,10 +26,9 @@ const FilterScreen = () => {
     navigation.goBack();
   };
 
-  const handleDateChange = date => {
-    const formattedDate =
-      date instanceof Date ? date.toLocaleDateString('en-GB') : date;
-    setSelectedDate(formattedDate);
+  const handleDateRangeChange = ({startDate, endDate}) => {
+    setStartDate(startDate);
+    setEndDate(endDate);
     setDatePickerVisibility(false);
   };
 
@@ -60,7 +60,9 @@ const FilterScreen = () => {
           setSearchQuery={setSearchQuery}
         />
         <DatePickerInput
-          selectedDate={selectedDate}
+          selectedDate={
+            startDate && endDate ? `${startDate} to ${endDate}` : ''
+          }
           handleOpenDatePicker={() => setDatePickerVisibility(true)}
         />
         <SelectOption
@@ -94,7 +96,7 @@ const FilterScreen = () => {
       <CalendarModal
         modalVisible={isDatePickerVisible}
         onClose={handleCancelDatePicker}
-        onSelectDate={handleDateChange} // Pass handleDateChange as onSelectDate
+        onSelectDateRange={handleDateRangeChange} // Updated prop for date range
       />
     </View>
   );
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFFFFF',
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 16,
   },
 });

@@ -3,16 +3,85 @@ import {View, TouchableOpacity, Text, StyleSheet, Modal} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import X from '../assets/X';
 
-const CalendarModal = ({modalVisible, onClose, onSelectDate}) => {
-  const [selectedDate, setSelectedDate] = useState(null);
+const CalendarModal = ({modalVisible, onClose, onSelectDateRange}) => {
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const handleDayPress = day => {
-    setSelectedDate(day.dateString);
+    if (startDate && endDate) {
+      setStartDate(day.dateString);
+      setEndDate(null);
+    } else if (!startDate) {
+      setStartDate(day.dateString);
+    } else {
+      if (new Date(day.dateString) >= new Date(startDate)) {
+        setEndDate(day.dateString);
+      } else {
+        setStartDate(day.dateString);
+        setEndDate(null);
+      }
+    }
+  };
+
+  const getMarkedDates = () => {
+    let markedDates = {};
+    if (startDate) {
+      markedDates[startDate] = {
+        startingDay: true,
+        customStyles: {
+          container: {
+            borderWidth: 2,
+            borderColor: 'white',
+            borderRadius: 8,
+          },
+          text: {
+            color: 'white',
+          },
+        },
+      };
+    }
+
+    if (startDate && endDate) {
+      let currentDate = startDate;
+      while (currentDate <= endDate) {
+        markedDates[currentDate] = {
+          customStyles: {
+            container: {
+              borderWidth: 1,
+              borderColor: 'white',
+              borderRadius: 8,
+            },
+            text: {
+              color: 'white',
+            },
+          },
+        };
+        currentDate = new Date(
+          new Date(currentDate).setDate(new Date(currentDate).getDate() + 1),
+        )
+          .toISOString()
+          .split('T')[0];
+      }
+      markedDates[endDate] = {
+        endingDay: true,
+        customStyles: {
+          container: {
+            borderWidth: 2,
+            borderColor: 'white',
+            borderRadius: 8,
+          },
+          text: {
+            color: 'white',
+          },
+        },
+      };
+    }
+    return markedDates;
   };
 
   const handleConfirm = () => {
-    if (selectedDate) {
-      onSelectDate(selectedDate);
+    if (startDate && endDate) {
+      onSelectDateRange?.({startDate, endDate});
     }
     onClose();
   };
@@ -31,22 +100,27 @@ const CalendarModal = ({modalVisible, onClose, onSelectDate}) => {
               <X stroke="white" />
             </TouchableOpacity>
           </View>
-          <Text style={styles.title}>Select Date</Text>
-          <Calendar
-            current={selectedDate || new Date()}
-            minDate={'2020-05-10'}
-            onDayPress={handleDayPress}
-            markedDates={{
-              [selectedDate]: {selected: true, selectedColor: '#041F4E'},
-            }}
-            monthFormat={'yyyy MM'}
-            theme={{
-              selectedDayBackgroundColor: '#041F4E',
-              selectedDayTextColor: '#041F4E',
-              todayTextColor: '#041F4E',
-              arrowColor: '#041F4E',
-            }}
-          />
+          <Text style={styles.title}>Select Date Range</Text>
+          <View>
+            <Calendar
+              current={startDate || new Date()}
+              minDate={'2020-05-10'}
+              onDayPress={handleDayPress}
+              markedDates={getMarkedDates()}
+              markingType={'custom'}
+              theme={{
+                backgroundColor: '#041F4E',
+                calendarBackground: '#041F4E',
+                selectedDayTextColor: '#041F4E',
+                todayTextColor: '#F1F5FF',
+                arrowColor: '#FFFFFF',
+                monthTextColor: '#FFFFFF',
+                dayTextColor: '#FFFFFF',
+                textDisabledColor: '#636363',
+                textSectionTitleColor: '#FFFFFF',
+              }}
+            />
+          </View>
         </View>
       </View>
     </Modal>
@@ -96,7 +170,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color: '#252525',
-    fontWeight: 700,
+    fontWeight: '700',
   },
 });
 
