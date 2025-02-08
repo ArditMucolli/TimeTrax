@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, Modal} from 'react-native';
 import {Calendar} from 'react-native-calendars';
+import X from '../assets/X';
 
 const CalendarModal = ({modalVisible, onClose, onSelectDate}) => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -20,6 +21,16 @@ const CalendarModal = ({modalVisible, onClose, onSelectDate}) => {
     <Modal visible={modalVisible} transparent animationType="slide">
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
+          <View style={styles.buttons}>
+            <TouchableOpacity
+              onPress={handleConfirm}
+              style={styles.confirmButton}>
+              <Text style={styles.buttonText}>Save</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
+              <X stroke="white" />
+            </TouchableOpacity>
+          </View>
           <Text style={styles.title}>Select Date</Text>
           <Calendar
             current={selectedDate || new Date()}
@@ -31,21 +42,11 @@ const CalendarModal = ({modalVisible, onClose, onSelectDate}) => {
             monthFormat={'yyyy MM'}
             theme={{
               selectedDayBackgroundColor: '#041F4E',
-              selectedDayTextColor: '#FFFFFF',
+              selectedDayTextColor: '#041F4E',
               todayTextColor: '#041F4E',
               arrowColor: '#041F4E',
             }}
           />
-          <View style={styles.buttons}>
-            <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-              <Text style={styles.buttonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleConfirm} // Trigger onConfirm when the date is selected
-              style={styles.confirmButton}>
-              <Text style={styles.buttonText}>Confirm</Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
     </Modal>
@@ -59,10 +60,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    width: 390,
+    height: 573,
+    backgroundColor: '#041F4E',
     padding: 20,
+    alignSelf: 'center',
     marginHorizontal: 20,
-    borderRadius: 10,
+    borderRadius: 50,
     elevation: 10,
   },
   title: {
@@ -77,20 +81,22 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   cancelButton: {
-    backgroundColor: '#E5E7EB',
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 8,
   },
   confirmButton: {
-    backgroundColor: '#041F4E',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    width: 120,
+    height: 40,
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
+    fontSize: 16,
+    color: '#252525',
+    fontWeight: 700,
   },
 });
 

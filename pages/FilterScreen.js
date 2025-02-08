@@ -51,7 +51,7 @@ const FilterScreen = () => {
       <View style={styles.header}>
         <Text style={styles.headerText}>Filter</Text>
         <TouchableOpacity onPress={handleBackPress} style={styles.closeButton}>
-          <X />
+          <X stroke="#041F4E" />
         </TouchableOpacity>
       </View>
       <View style={styles.formContainer}>

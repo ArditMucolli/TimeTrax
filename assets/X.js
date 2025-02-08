@@ -10,7 +10,6 @@ const X = props => (
     {...props}>
     <Path
       d="M18 6L6 18M6 6L18 18"
-      stroke="#041F4E"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"

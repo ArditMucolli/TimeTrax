@@ -37,7 +37,7 @@ const LeaveTypeModal = ({
             style={styles.closeButton}
             onPress={onClose}
             activeOpacity={0.7}>
-            <X width={24} height={24} color="#333" />
+            <X width={24} height={24} color="#333" stroke="#041F4E" />
           </TouchableOpacity>
 
           <Text style={styles.modalTitle}>Select Type</Text>
