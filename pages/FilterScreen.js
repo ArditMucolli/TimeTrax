@@ -46,6 +46,20 @@ const FilterScreen = () => {
     setIsStatusModalVisible(false);
   };
 
+  const formatDate = date => {
+    if (!date) return '';
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  const formattedDateRange =
+    startDate && endDate
+      ? `${formatDate(startDate)} - ${formatDate(endDate)}`
+      : 'Select a date range';
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -60,9 +74,7 @@ const FilterScreen = () => {
           setSearchQuery={setSearchQuery}
         />
         <DatePickerInput
-          selectedDate={
-            startDate && endDate ? `${startDate} to ${endDate}` : ''
-          }
+          selectedDate={formattedDateRange}
           handleOpenDatePicker={() => setDatePickerVisibility(true)}
         />
         <SelectOption
@@ -96,7 +108,7 @@ const FilterScreen = () => {
       <CalendarModal
         modalVisible={isDatePickerVisible}
         onClose={handleCancelDatePicker}
-        onSelectDateRange={handleDateRangeChange} // Updated prop for date range
+        onSelectDateRange={handleDateRangeChange}
       />
     </View>
   );

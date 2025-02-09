@@ -100,7 +100,6 @@ const CalendarModal = ({modalVisible, onClose, onSelectDateRange}) => {
               <X stroke="white" />
             </TouchableOpacity>
           </View>
-          <Text style={styles.title}>Select Date Range</Text>
           <View>
             <Calendar
               current={startDate || new Date()}

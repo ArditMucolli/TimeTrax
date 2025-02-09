@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 import LeaveTypeModal from './LeaveTypeModal';
 import ArrowDown from '../../assets/ArrowDown';
-import DatePicker from 'react-native-date-picker';
 import CalendarIcon from '../../assets/footer/CalendarIcon';
+import CalendarModal from '../CalendarModal';
 
 const LeaveForm = ({
   leaveType,
@@ -19,34 +19,47 @@ const LeaveForm = ({
   handleSelectLeaveType,
 }) => {
   const [description, setDescription] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [open, setOpen] = useState(false);
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const [calendarVisible, setCalendarVisible] = useState(false);
 
-  const handleDateChange = date => {
-    setSelectedDate(date);
-    setOpen(false);
+  const handleDateRangeSelect = ({startDate, endDate}) => {
+    setSelectedStartDate(startDate);
+    setSelectedEndDate(endDate);
+    setCalendarVisible(false);
   };
 
-  const formattedDate = selectedDate.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  const calculateNumberOfDays = (startDate, endDate) => {
+    if (!startDate || !endDate) return 0;
 
-  const calculateDaysDifference = selectedCalendarDate => {
-    const currentDate = new Date();
-    const diffTime = selectedCalendarDate - currentDate;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const timeDiff = end.getTime() - start.getTime();
+    const dayDiff = timeDiff / (1000 * 3600 * 24);
+
+    return dayDiff + 1;
   };
 
-  const numberOfDays = calculateDaysDifference(selectedDate);
+  const formatDate = date => {
+    if (!date) return '';
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
-  const dayText = numberOfDays === 1 ? 'Day' : 'Days';
+  const numberOfDays = calculateNumberOfDays(
+    selectedStartDate,
+    selectedEndDate,
+  );
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
+  const formattedDateRange =
+    selectedStartDate && selectedEndDate
+      ? `${formatDate(selectedStartDate)} - ${formatDate(selectedEndDate)}`
+      : 'Select a date range';
+
   return (
     <View style={styles.container}>
       <View style={styles.section}>
@@ -72,27 +85,26 @@ const LeaveForm = ({
         <Text style={styles.label}>Calendar</Text>
         <TouchableOpacity
           style={styles.typeSelector}
-          onPress={() => setOpen(true)}>
-          <Text style={styles.value}>{formattedDate}</Text>
+          onPress={() => setCalendarVisible(!calendarVisible)}>
+          <Text style={styles.value}>{formattedDateRange}</Text>
           <CalendarIcon stroke="#979797" style={styles.calendarIcon} />
         </TouchableOpacity>
       </View>
-      {open && (
-        <DatePicker
-          modal
-          open={open}
-          date={selectedDate}
-          mode="date"
-          onConfirm={handleDateChange}
-          onCancel={() => setOpen(false)}
-          minimumDate={tomorrow} // Disable past dates and set minimum date to tomorrow
-        />
-      )}
+
+      <CalendarModal
+        modalVisible={calendarVisible}
+        onClose={() => setCalendarVisible(false)}
+        onSelectDateRange={handleDateRangeSelect}
+      />
+
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>
-          Apply for {numberOfDays} {dayText} Leave
+          {numberOfDays > 0
+            ? `Apply for ${numberOfDays} day${numberOfDays > 1 ? 's' : ''}`
+            : 'Apply for Leave'}
         </Text>
       </TouchableOpacity>
+
       <LeaveTypeModal
         modalVisible={modalVisible}
         leaveOptions={leaveOptions}
@@ -166,7 +178,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFFFFF',
-    fontWeight: 700,
+    fontWeight: '700',
     fontSize: 16,
   },
 });
