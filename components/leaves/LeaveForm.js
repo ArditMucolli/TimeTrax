@@ -6,27 +6,32 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import LeaveTypeModal from './LeaveTypeModal';
 import ArrowDown from '../../assets/ArrowDown';
 import CalendarIcon from '../../assets/footer/CalendarIcon';
+import LeaveTypeModal from './LeaveTypeModal';
 import CalendarModal from '../CalendarModal';
+import useModal from '../../hooks/useModal';
 
-const LeaveForm = ({
-  leaveType,
-  setModalVisible,
-  modalVisible,
-  leaveOptions,
-  handleSelectLeaveType,
-}) => {
+const LeaveForm = ({leaveType, leaveOptions, handleSelectLeaveType}) => {
   const [description, setDescription] = useState('');
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
-  const [calendarVisible, setCalendarVisible] = useState(false);
+
+  const {
+    isVisible: isLeaveTypeModalVisible,
+    openModal: openLeaveTypeModal,
+    closeModal: closeLeaveTypeModal,
+  } = useModal();
+  const {
+    isVisible: isCalendarVisible,
+    openModal: openCalendarModal,
+    closeModal: closeCalendarModal,
+  } = useModal();
 
   const handleDateRangeSelect = ({startDate, endDate}) => {
     setSelectedStartDate(startDate);
     setSelectedEndDate(endDate);
-    setCalendarVisible(false);
+    closeCalendarModal();
   };
 
   const calculateNumberOfDays = (startDate, endDate) => {
@@ -34,10 +39,8 @@ const LeaveForm = ({
 
     const start = new Date(startDate);
     const end = new Date(endDate);
-
     const timeDiff = end.getTime() - start.getTime();
     const dayDiff = timeDiff / (1000 * 3600 * 24);
-
     return dayDiff + 1;
   };
 
@@ -66,7 +69,7 @@ const LeaveForm = ({
         <Text style={styles.label}>Type</Text>
         <TouchableOpacity
           style={styles.typeSelector}
-          onPress={() => setModalVisible(true)}>
+          onPress={openLeaveTypeModal}>
           <Text style={styles.value}>{leaveType}</Text>
           <ArrowDown />
         </TouchableOpacity>
@@ -85,15 +88,15 @@ const LeaveForm = ({
         <Text style={styles.label}>Calendar</Text>
         <TouchableOpacity
           style={styles.typeSelector}
-          onPress={() => setCalendarVisible(!calendarVisible)}>
+          onPress={openCalendarModal}>
           <Text style={styles.value}>{formattedDateRange}</Text>
           <CalendarIcon stroke="#979797" style={styles.calendarIcon} />
         </TouchableOpacity>
       </View>
 
       <CalendarModal
-        modalVisible={calendarVisible}
-        onClose={() => setCalendarVisible(false)}
+        modalVisible={isCalendarVisible}
+        onClose={closeCalendarModal}
         onSelectDateRange={handleDateRangeSelect}
       />
 
@@ -106,10 +109,10 @@ const LeaveForm = ({
       </TouchableOpacity>
 
       <LeaveTypeModal
-        modalVisible={modalVisible}
+        modalVisible={isLeaveTypeModalVisible}
         leaveOptions={leaveOptions}
         onSelectLeaveType={handleSelectLeaveType}
-        onClose={() => setModalVisible(false)}
+        onClose={closeLeaveTypeModal}
       />
     </View>
   );

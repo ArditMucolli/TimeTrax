@@ -3,10 +3,11 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import X from '../assets/X';
 import LeaveTypeModal from '../components/leaves/LeaveTypeModal';
+import CalendarModal from '../components/CalendarModal';
 import SearchInput from '../components/filter/SearchInput';
 import DatePickerInput from '../components/filter/DatePickerInput ';
 import SelectOption from '../components/filter/SelectOption';
-import CalendarModal from '../components/CalendarModal';
+import useModal from '../hooks/useModal';
 
 const FilterScreen = () => {
   const navigation = useNavigation();
@@ -15,9 +16,22 @@ const FilterScreen = () => {
   const [endDate, setEndDate] = useState('');
   const [leaveType, setLeaveType] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [isLeaveTypeModalVisible, setIsLeaveTypeModalVisible] = useState(false);
-  const [isStatusModalVisible, setIsStatusModalVisible] = useState(false);
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const {
+    isVisible: isLeaveTypeModalVisible,
+    openModal: openLeaveTypeModal,
+    closeModal: closeLeaveTypeModal,
+  } = useModal();
+  const {
+    isVisible: isStatusModalVisible,
+    openModal: openStatusModal,
+    closeModal: closeStatusModal,
+  } = useModal();
+  const {
+    isVisible: isDatePickerVisible,
+    openModal: openDatePickerModal,
+    closeModal: closeDatePickerModal,
+  } = useModal();
 
   const leaveOptions = ['PTO', 'UTO'];
   const statusOptions = ['Pending', 'Approved', 'Rejected'];
@@ -29,21 +43,21 @@ const FilterScreen = () => {
   const handleDateRangeChange = ({startDate, endDate}) => {
     setStartDate(startDate);
     setEndDate(endDate);
-    setDatePickerVisibility(false);
+    closeDatePickerModal();
   };
 
   const handleCancelDatePicker = () => {
-    setDatePickerVisibility(false);
+    closeDatePickerModal();
   };
 
   const handleLeaveTypeSelect = selectedLeaveType => {
     setLeaveType(selectedLeaveType);
-    setIsLeaveTypeModalVisible(false);
+    closeLeaveTypeModal();
   };
 
   const handleSelectStatus = status => {
     setSelectedStatus(status);
-    setIsStatusModalVisible(false);
+    closeStatusModal();
   };
 
   const formatDate = date => {
@@ -75,36 +89,39 @@ const FilterScreen = () => {
         />
         <DatePickerInput
           selectedDate={formattedDateRange}
-          handleOpenDatePicker={() => setDatePickerVisibility(true)}
+          handleOpenDatePicker={openDatePickerModal}
         />
         <SelectOption
           label="Choose Type"
           selectedValue={leaveType}
-          setModalVisible={setIsLeaveTypeModalVisible}
+          setModalVisible={openLeaveTypeModal}
         />
         <SelectOption
           label="Choose Status"
           selectedValue={selectedStatus}
-          setModalVisible={setIsStatusModalVisible}
+          setModalVisible={openStatusModal}
         />
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Done</Text>
         </TouchableOpacity>
       </View>
+
       <LeaveTypeModal
         modalVisible={isLeaveTypeModalVisible}
         leaveOptions={leaveOptions}
         onSelectLeaveType={handleLeaveTypeSelect}
-        onClose={() => setIsLeaveTypeModalVisible(false)}
+        onClose={closeLeaveTypeModal}
         selectedLeaveType={leaveType}
       />
+
       <LeaveTypeModal
         modalVisible={isStatusModalVisible}
         leaveOptions={statusOptions}
         onSelectLeaveType={handleSelectStatus}
-        onClose={() => setIsStatusModalVisible(false)}
+        onClose={closeStatusModal}
         selectedLeaveType={selectedStatus}
       />
+
       <CalendarModal
         modalVisible={isDatePickerVisible}
         onClose={handleCancelDatePicker}
