@@ -49,7 +49,7 @@ const CheckModal = ({visible, onClose}) => {
   const handleCheckOut = () => {
     stopTimer();
     setIsOnBreak(false);
-    setElapsedTime(0); // Reset the timer when checking out
+    setElapsedTime(0);
   };
 
   useEffect(() => {
@@ -80,17 +80,18 @@ const CheckModal = ({visible, onClose}) => {
                 <Text style={styles.textContent}>Check In</Text>
               </TouchableOpacity>
             ) : (
-              <View style={styles.timerWidget}>
-                {!isOnBreak && (
-                  <Text style={styles.timerText}>
-                    {new Date(elapsedTime * 1000).toISOString().substr(14, 5)}h
-                  </Text>
-                )}
-                {isOnBreak && (
-                  <Text style={styles.timerText}>
-                    {new Date(elapsedTime * 1000).toISOString().substr(14, 5)}h
-                  </Text>
-                )}
+              <View
+                style={[
+                  styles.timerWidget,
+                  isOnBreak && styles.onBreakTimerWidget,
+                ]}>
+                <Text
+                  style={[
+                    styles.timerText,
+                    isOnBreak && styles.onBreakTimerText,
+                  ]}>
+                  {new Date(elapsedTime * 1000).toISOString().substr(14, 5)}h
+                </Text>
               </View>
             )}
 
@@ -212,7 +213,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'center',
     flexDirection: 'column',
   },
   checkOutButton: {
@@ -266,10 +266,17 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginTop: 20,
   },
+  onBreakTimerWidget: {
+    backgroundColor: 'rgba(255, 0, 0, 0.2)',
+    borderColor: 'rgba(255, 0, 0, 0.8)',
+  },
   timerText: {
     fontSize: 48,
     fontWeight: 700,
     color: 'rgba(49, 176, 115, 0.8)',
+  },
+  onBreakTimerText: {
+    color: 'rgba(255, 0, 0, 0.8)',
   },
 });
 
