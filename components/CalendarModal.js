@@ -7,6 +7,14 @@ const CalendarModal = ({modalVisible, onClose, onSelectDateRange}) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
+  const formatDateString = date => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const handleDayPress = day => {
     if (startDate && endDate) {
       setStartDate(day.dateString);
@@ -102,7 +110,7 @@ const CalendarModal = ({modalVisible, onClose, onSelectDateRange}) => {
           </View>
           <View>
             <Calendar
-              current={startDate || new Date()}
+              current={formatDateString(startDate || new Date())}
               minDate={'2020-05-10'}
               onDayPress={handleDayPress}
               markedDates={getMarkedDates()}
