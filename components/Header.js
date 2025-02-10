@@ -9,7 +9,7 @@ import {
 import Timer from '../assets/header/Timer';
 import HamburgerMenu from '../assets/header/HamburgerMenu';
 import Bell from '../assets/header/Bell';
-import CheckInModal from './CheckModal'; // Import the Check-in Modal component
+import CheckModal from './checkModal/CheckModal';
 
 const Header = ({Title}) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -30,9 +30,7 @@ const Header = ({Title}) => {
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Render the Check-in Modal */}
-      <CheckInModal
+      <CheckModal
         visible={isModalVisible}
         onClose={() => setModalVisible(false)}
       />
