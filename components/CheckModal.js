@@ -10,6 +10,7 @@ import {
 import CheckInModal from '../assets/checkIn-modals/CheckInModal';
 import X from '../assets/X';
 import Break from '../assets/checkIn-modals/Break';
+import Continue from '../assets/checkIn-modals/Continue';
 import CheckOut from '../assets/checkIn-modals/CheckOut';
 
 const CheckModal = ({visible, onClose}) => {
@@ -37,10 +38,18 @@ const CheckModal = ({visible, onClose}) => {
 
   const startBreak = () => {
     setIsOnBreak(true);
+    stopTimer();
   };
 
-  const endBreak = () => {
+  const continueTimer = () => {
     setIsOnBreak(false);
+    startTimer();
+  };
+
+  const handleCheckOut = () => {
+    stopTimer();
+    setIsOnBreak(false);
+    setElapsedTime(0); // Reset the timer when checking out
   };
 
   useEffect(() => {
@@ -63,7 +72,7 @@ const CheckModal = ({visible, onClose}) => {
           </View>
 
           <View style={styles.centerContent}>
-            {!timerStarted ? (
+            {!timerStarted && !isOnBreak ? (
               <TouchableOpacity
                 style={styles.checkInButton}
                 onPress={startTimer}>
@@ -71,36 +80,75 @@ const CheckModal = ({visible, onClose}) => {
                 <Text style={styles.textContent}>Check In</Text>
               </TouchableOpacity>
             ) : (
-              <Text style={styles.textContent}>
-                {new Date(elapsedTime * 1000).toISOString().substr(14, 5)}
-              </Text>
+              <View style={styles.timerWidget}>
+                {!isOnBreak && (
+                  <Text style={styles.timerText}>
+                    {new Date(elapsedTime * 1000).toISOString().substr(14, 5)}h
+                  </Text>
+                )}
+                {isOnBreak && (
+                  <Text style={styles.timerText}>
+                    {new Date(elapsedTime * 1000).toISOString().substr(14, 5)}h
+                  </Text>
+                )}
+              </View>
             )}
 
             {timerStarted && !isOnBreak && (
-              <>
-                <TouchableOpacity onPress={startBreak}>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  onPress={startBreak}
+                  style={styles.breakButton}>
                   <Break />
-                  <Text>Start Break</Text>
+                  <Text style={[styles.buttonText, styles.startBreakText]}>
+                    Break
+                  </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={stopTimer}>
+                <TouchableOpacity
+                  onPress={handleCheckOut}
+                  style={styles.checkOutButton}>
                   <CheckOut />
-                  <Text>Check Out</Text>
+                  <Text style={[styles.buttonText, styles.checkOutText]}>
+                    Check Out
+                  </Text>
                 </TouchableOpacity>
-                <Text style={styles.reasonText}>Select Reason *</Text>
-                <Text>Please select one reason to pause your work</Text>
+              </View>
+            )}
+
+            {isOnBreak && (
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={styles.breakButton}
+                  onPress={continueTimer}>
+                  <Continue />
+                  <Text style={[styles.buttonText, styles.startBreakText]}>
+                    Continue
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleCheckOut}
+                  style={styles.checkOutButton}>
+                  <CheckOut />
+                  <Text style={[styles.buttonText, styles.checkOutText]}>
+                    Check Out
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {timerStarted && !isOnBreak && (
+              <View style={styles.reasonStyle}>
+                <Text style={styles.reasonTitle}>Select Reason *</Text>
+                <Text style={styles.reasonText}>
+                  Please select one reason to pause your work
+                </Text>
                 <TextInput
                   style={styles.dropdown}
                   value={breakReason}
                   onChangeText={setBreakReason}
-                  placeholder="Choose a reason"
+                  placeholder="Select Reason"
                 />
-              </>
-            )}
-
-            {isOnBreak && (
-              <TouchableOpacity style={styles.breakButton} onPress={endBreak}>
-                <Text style={styles.breakText}>End Break</Text>
-              </TouchableOpacity>
+              </View>
             )}
           </View>
         </View>
@@ -154,31 +202,74 @@ const styles = StyleSheet.create({
   cancelButton: {
     padding: 5,
   },
-  breakButton: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: '#f0ad4e',
-    borderRadius: 10,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginTop: 30,
+    gap: 40,
   },
-  breakText: {
-    fontSize: 18,
+  breakButton: {
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+  },
+  checkOutButton: {
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: 700,
+    marginTop: 15,
+  },
+  startBreakText: {
+    color: '#041F4E',
+  },
+  checkOutText: {
+    color: 'red',
+  },
+  reasonTitle: {
+    marginTop: 20,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#252525',
   },
   reasonText: {
-    marginTop: 20,
-    fontSize: 14,
+    marginTop: 5,
+    marginBottom: 10,
+    fontSize: 11,
     fontWeight: 'bold',
-    color: '#041F4E',
+    color: '#252525',
   },
   dropdown: {
     marginTop: 10,
-    height: 40,
-    width: '80%',
+    height: 45,
+    width: 330,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     paddingLeft: 10,
+  },
+  timerWidget: {
+    backgroundColor: 'rgba(49, 176, 115, 0.2)',
+    borderColor: 'rgba(49, 176, 115, 0.8)',
+    borderWidth: 9,
+    width: 300,
+    height: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+    marginTop: 20,
+  },
+  timerText: {
+    fontSize: 48,
+    fontWeight: 700,
+    color: 'rgba(49, 176, 115, 0.8)',
   },
 });
 
