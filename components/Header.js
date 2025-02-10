@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,11 @@ import {
 import Timer from '../assets/header/Timer';
 import HamburgerMenu from '../assets/header/HamburgerMenu';
 import Bell from '../assets/header/Bell';
+import CheckInModal from './CheckModal'; // Import the Check-in Modal component
 
 const Header = ({Title}) => {
+  const [isModalVisible, setModalVisible] = useState(false);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -19,7 +22,7 @@ const Header = ({Title}) => {
         </TouchableOpacity>
         <Text style={styles.title}>{Title}</Text>
         <View style={styles.rightIcons}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Timer />
           </TouchableOpacity>
           <TouchableOpacity>
@@ -27,9 +30,17 @@ const Header = ({Title}) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* Render the Check-in Modal */}
+      <CheckInModal
+        visible={isModalVisible}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };
+
+export default Header;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -58,5 +69,3 @@ const styles = StyleSheet.create({
     width: 50,
   },
 });
-
-export default Header;
