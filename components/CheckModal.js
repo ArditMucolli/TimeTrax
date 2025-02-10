@@ -12,6 +12,8 @@ import X from '../assets/X';
 import Break from '../assets/checkIn-modals/Break';
 import Continue from '../assets/checkIn-modals/Continue';
 import CheckOut from '../assets/checkIn-modals/CheckOut';
+import CheckOutModal from '../assets/checkIn-modals/CheckoutModal';
+import Warning from '../assets/checkIn-modals/Warning';
 
 const CheckModal = ({visible, onClose}) => {
   const [timerStarted, setTimerStarted] = useState(false);
@@ -19,6 +21,8 @@ const CheckModal = ({visible, onClose}) => {
   const [intervalId, setIntervalId] = useState(null);
   const [isOnBreak, setIsOnBreak] = useState(false);
   const [breakReason, setBreakReason] = useState('');
+  const [showCheckOutConfirmation, setShowCheckOutConfirmation] =
+    useState(false);
 
   const startTimer = () => {
     setTimerStarted(true);
@@ -47,9 +51,19 @@ const CheckModal = ({visible, onClose}) => {
   };
 
   const handleCheckOut = () => {
+    setShowCheckOutConfirmation(true); // Show the confirmation message
+  };
+
+  const confirmCheckOut = () => {
     stopTimer();
     setIsOnBreak(false);
     setElapsedTime(0);
+    setShowCheckOutConfirmation(false); // Close the confirmation message
+    onClose(); // Close the main modal
+  };
+
+  const cancelCheckOut = () => {
+    setShowCheckOutConfirmation(false); // Close the confirmation message
   };
 
   useEffect(() => {
@@ -66,7 +80,7 @@ const CheckModal = ({visible, onClose}) => {
         <View style={styles.modalContent}>
           <View style={styles.header}>
             <Text style={styles.title}>Time and Attendance</Text>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+            <TouchableOpacity style={styles.dismissButton} onPress={onClose}>
               <X stroke="black" />
             </TouchableOpacity>
           </View>
@@ -79,6 +93,34 @@ const CheckModal = ({visible, onClose}) => {
                 <CheckInModal />
                 <Text style={styles.textContent}>Check In</Text>
               </TouchableOpacity>
+            ) : showCheckOutConfirmation ? (
+              <View style={styles.checkOutConfirmation}>
+                <CheckOutModal />
+                <View style={styles.confirmationContent}>
+                  <Text style={styles.confirmationTitle}>Check Out *</Text>
+                  <View style={styles.warningWrap}>
+                    <View style={styles.warningContainer}>
+                      <Warning />
+                      <Text style={styles.warningText}>Warning!</Text>
+                    </View>
+                    <Text style={styles.confirmationText}>
+                      Are you sure you want to check out? This cannot be undone.
+                    </Text>
+                  </View>
+                  <View style={styles.checkoutButtonContainer}>
+                    <TouchableOpacity
+                      style={styles.checkoutCancelButton}
+                      onPress={cancelCheckOut}>
+                      <Text style={styles.checkoutButtonCancel}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.checkoutConfirmButton}
+                      onPress={confirmCheckOut}>
+                      <Text style={styles.checkoutButtonConfirm}>Yes</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
             ) : (
               <View
                 style={[
@@ -95,7 +137,7 @@ const CheckModal = ({visible, onClose}) => {
               </View>
             )}
 
-            {timerStarted && !isOnBreak && (
+            {timerStarted && !isOnBreak && !showCheckOutConfirmation && (
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   onPress={startBreak}
@@ -116,7 +158,7 @@ const CheckModal = ({visible, onClose}) => {
               </View>
             )}
 
-            {isOnBreak && (
+            {isOnBreak && !showCheckOutConfirmation && (
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={styles.breakButton}
@@ -137,7 +179,7 @@ const CheckModal = ({visible, onClose}) => {
               </View>
             )}
 
-            {timerStarted && !isOnBreak && (
+            {timerStarted && !isOnBreak && !showCheckOutConfirmation && (
               <View style={styles.reasonStyle}>
                 <Text style={styles.reasonTitle}>Select Reason *</Text>
                 <Text style={styles.reasonText}>
@@ -183,6 +225,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  dismissButton: {
+    padding: 5,
+  },
   centerContent: {
     flex: 1,
     marginTop: 80,
@@ -199,9 +244,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  cancelButton: {
-    padding: 5,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -233,8 +275,10 @@ const styles = StyleSheet.create({
   checkOutText: {
     color: 'red',
   },
-  reasonTitle: {
+  reasonStyle: {
     marginTop: 20,
+  },
+  reasonTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#252525',
@@ -277,6 +321,81 @@ const styles = StyleSheet.create({
   },
   onBreakTimerText: {
     color: 'rgba(255, 0, 0, 0.8)',
+  },
+
+  checkOutConfirmation: {
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    width: '100%',
+    paddingBottom: 20,
+  },
+  confirmationContent: {
+    marginTop: 150,
+    width: '100%',
+    alignItems: 'flex-start', // Align the title to the left
+    paddingHorizontal: 16,
+  },
+  confirmationTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#252525',
+    marginBottom: 10,
+    textAlign: 'left', // Ensure text is aligned to the left
+  },
+  warningWrap: {
+    width: 330,
+    height: 49,
+    backgroundColor: '#E2EAFE',
+    borderRadius: 10,
+    padding: 10,
+  },
+  warningContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  warningText: {
+    fontSize: 14,
+    color: '#E33030',
+    marginLeft: 8,
+  },
+  confirmationText: {
+    fontSize: 10,
+    color: '#252525',
+  },
+  checkoutButtonContainer: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+    gap: 10,
+  },
+  checkoutCancelButton: {
+    width: 150,
+    height: 45,
+    padding: 10,
+    borderRadius: 10,
+    borderColor: '#979797',
+    borderWidth: 2,
+    marginHorizontal: 5,
+  },
+  checkoutConfirmButton: {
+    width: 150,
+    height: 45,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: '#041F4E',
+  },
+  checkoutButtonCancel: {
+    color: '#979797',
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  checkoutButtonConfirm: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
