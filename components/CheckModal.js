@@ -90,7 +90,7 @@ const CheckModal = ({visible, onClose}) => {
                     styles.timerText,
                     isOnBreak && styles.onBreakTimerText,
                   ]}>
-                  {new Date(elapsedTime * 1000).toISOString().substr(14, 5)}h
+                  {new Date(elapsedTime * 1000).toISOString().substr(11, 5)}h
                 </Text>
               </View>
             )}
