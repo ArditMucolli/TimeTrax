@@ -1,6 +1,14 @@
 import React, {useState} from 'react';
-import {View, TextInput, Button, StyleSheet, Text} from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
+import TimeTrax from '../assets/login/TimeTrax';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -18,8 +26,8 @@ const LoginScreen = ({navigation}) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
       navigation.replace('Homepage');
-    } catch (error) {
-      console.error('Login Error:', error);
+    } catch (err) {
+      console.error('Login Error:', err);
       setError('Error logging in. Please check your credentials.');
     } finally {
       setLoading(false);
@@ -28,41 +36,57 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <View style={styles.logoContainer}>
+        <TimeTrax />
+      </View>
 
-      {/* Email Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+      <View style={styles.formContainer}>
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
 
-      {/* Password Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        <Text style={styles.label}>Password</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
 
-      {/* Error Message */}
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      {/* Loading Indicator */}
-      {loading && <Text>Loading...</Text>}
+        {loading && (
+          <ActivityIndicator
+            size="large"
+            color="#1C3D69"
+            style={styles.loadingIndicator}
+          />
+        )}
 
-      {/* Login Button */}
-      <Button title="Login" onPress={handleLogin} disabled={loading} />
+        <TouchableOpacity
+          style={[styles.button, styles.loginButton]}
+          onPress={handleLogin}
+          disabled={loading}>
+          <Text style={styles.buttonText}>Sign in</Text>
+        </TouchableOpacity>
+      </View>
 
-      {/* Option to go to signup screen */}
-      <Button
-        title="Don't have an account? Sign up"
-        onPress={() => navigation.navigate('SignUp')}
-      />
+      <View style={styles.bottomContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+          <Text style={styles.signupText}>Don't have an account?</Text>
+        </TouchableOpacity>
+
+        <View style={styles.contactWrap}>
+          <Text style={styles.contactText}>Contact Administrator</Text>
+        </View>
+      </View>
     </View>
   );
 };
@@ -70,27 +94,92 @@ const LoginScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-    backgroundColor: '#F1F5FF',
+    padding: 20,
+    backgroundColor: '#1E5CD7',
   },
-  title: {
-    fontSize: 32,
-    textAlign: 'center',
-    marginBottom: 20,
+  logoContainer: {
+    top: '15%',
+    alignItems: 'center',
+  },
+  formContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    width: 330,
+    alignSelf: 'center',
+  },
+  label: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 8,
   },
   input: {
-    height: 50,
-    borderColor: '#ccc',
+    width: 330,
+    height: 55,
+    borderColor: '#D1D5DB',
     borderWidth: 1,
-    marginBottom: 12,
-    paddingLeft: 8,
-    borderRadius: 4,
+    marginBottom: 16,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    fontSize: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    elevation: 2,
   },
   errorText: {
-    color: 'red',
-    marginBottom: 12,
+    color: '#EF4444',
     textAlign: 'center',
+    marginBottom: 12,
+  },
+  loadingIndicator: {
+    marginVertical: 16,
+  },
+  button: {
+    width: 330,
+    height: 55,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 16,
+    marginTop: 20,
+  },
+  loginButton: {
+    backgroundColor: '#041F4E',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  bottomContainer: {
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: '100%',
+  },
+  signupText: {
+    textAlign: 'center',
+    color: '#FFFFFF',
+    fontSize: 16,
+    marginBottom: 18,
+  },
+  contactWrap: {
+    width: 330,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#FFFFFF',
+    borderWidth: 1,
+    borderRadius: 10,
+    alignSelf: 'center',
+  },
+  contactText: {
+    color: '#FFFFFF',
+    fontSize: 16,
   },
 });
 

@@ -32,7 +32,9 @@ const App = () => {
 };
 
 const UnauthenticatedStack = () => (
-  <Stack.Navigator initialRouteName="Login">
+  <Stack.Navigator
+    initialRouteName="Login"
+    screenOptions={{headerShown: false}}>
     <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="SignUp" component={SignUpScreen} />
   </Stack.Navigator>
