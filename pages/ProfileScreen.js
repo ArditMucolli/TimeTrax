@@ -1,6 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth'; // Firebase auth import
 import ArrowLeft from '../assets/ArrowLeft';
 import LogOutIcon from '../assets/profile/LogOutIcon';
 import ProfileDetails from '../components/ProfileDetails';
@@ -15,6 +16,31 @@ const ProfileScreen = () => {
     navigation.navigate(screenName);
   };
 
+  const handleLogout = () => {
+    Alert.alert(
+      'Confirm Logout',
+      'Are you sure you want to log out?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: () => {
+            auth()
+              .signOut()
+              .then(() => {
+                console.log('User logged out');
+              })
+              .catch(error => console.error('Logout error:', error));
+          },
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -24,7 +50,7 @@ const ProfileScreen = () => {
           <ArrowLeft />
           <Text style={styles.profileText}>Profile</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.logoutSection}>
+        <TouchableOpacity style={styles.logoutSection} onPress={handleLogout}>
           <Text style={styles.logoutText}>Log out</Text>
           <LogOutIcon />
         </TouchableOpacity>
@@ -69,6 +95,7 @@ const ProfileScreen = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',

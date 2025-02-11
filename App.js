@@ -1,29 +1,44 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet} from 'react-native';
 import Footer from './components/Footer';
 import Homepage from './pages/Homepage';
 import ProfileScreen from './pages/ProfileScreen';
-import {
-  NavigationContainer,
-  useNavigationState,
-} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 import LeavesScreen from './pages/LeavesScreen';
 import NewLeaveScreen from './pages/NewLeaveScreen';
 import PayslipScreen from './pages/PayslipScreen';
 import FilterScreen from './pages/FilterScreen';
+import LoginScreen from './pages/LoginScreen';
+import SignUpScreen from './pages/SignUpScreen';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import auth from '@react-native-firebase/auth';
+import {useNavigationState} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 
 const App = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(setUser);
+    return () => unsubscribe();
+  }, []);
+
   return (
     <NavigationContainer>
-      <MainStackNavigator />
+      {user ? <AuthenticatedStack /> : <UnauthenticatedStack />}
     </NavigationContainer>
   );
 };
 
-const MainStackNavigator = () => {
+const UnauthenticatedStack = () => (
+  <Stack.Navigator initialRouteName="Login">
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="SignUp" component={SignUpScreen} />
+  </Stack.Navigator>
+);
+
+const AuthenticatedStack = () => {
   const routeName = useNavigationState(
     state => state?.routes[state.index]?.name,
   );
