@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1E5CD7',
   },
   logoContainer: {
-    top: '15%',
+    top: '5%',
     alignItems: 'center',
   },
   formContainer: {
