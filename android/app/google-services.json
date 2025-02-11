@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "833473987207",
+    "project_id": "timetrax-19998",
+    "storage_bucket": "timetrax-19998.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:833473987207:android:c6211f92b346aea66aee22",
+        "android_client_info": {
+          "package_name": "com.timetrax"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlQFC1q7yIWU3B-IDXTB8PC5S5QbZhOsw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
