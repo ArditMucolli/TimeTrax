@@ -1,6 +1,16 @@
 import React, {useState} from 'react';
-import {View, TextInput, Button, StyleSheet, Text} from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
+import TimeTrax from '../assets/login/TimeTrax';
+import EmailIcon from '../assets/login/EmailIcon';
+import PasswordIcon from '../assets/login/PasswordIcon';
 
 const SignUpScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -17,9 +27,9 @@ const SignUpScreen = ({navigation}) => {
     setLoading(true);
     try {
       await auth().createUserWithEmailAndPassword(email, password);
-      navigation.replace('Homepage'); // Navigate to the homepage after successful registration
-    } catch (error) {
-      console.error('Sign Up Error:', error);
+      navigation.replace('Homepage');
+    } catch (err) {
+      console.error('Sign Up Error:', err);
       setError('Error creating account. Please try again.');
     } finally {
       setLoading(false);
@@ -28,41 +38,65 @@ const SignUpScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
+      <View style={styles.logoContainer}>
+        <TimeTrax />
+      </View>
 
-      {/* Email Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+      <View style={styles.formContainer}>
+        <Text style={styles.label}>Email</Text>
+        <View style={styles.inputWrapper}>
+          <View style={styles.inputIcon}>
+            <EmailIcon />
+          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            placeholderTextColor="#979797"
+          />
+        </View>
 
-      {/* Password Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        <Text style={styles.label}>Password</Text>
+        <View style={styles.inputWrapper}>
+          <View style={styles.inputIcon}>
+            <PasswordIcon />
+          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            placeholderTextColor="#979797"
+          />
+        </View>
 
-      {/* Error Message */}
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      {/* Loading Indicator */}
-      {loading && <Text>Loading...</Text>}
+        {loading && (
+          <ActivityIndicator
+            size="large"
+            color="#1C3D69"
+            style={styles.loadingIndicator}
+          />
+        )}
 
-      {/* Sign Up Button */}
-      <Button title="Sign Up" onPress={handleSignUp} disabled={loading} />
+        <TouchableOpacity
+          style={[styles.button, styles.signUpButton]}
+          onPress={handleSignUp}
+          disabled={loading}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
 
-      {/* Option to go to login screen */}
-      <Button
-        title="Already have an account? Login"
-        onPress={() => navigation.navigate('Login')} // Navigate to the login screen
-      />
+      <View style={styles.bottomContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.signupText}>Already have an account? Login</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -70,27 +104,86 @@ const SignUpScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-    backgroundColor: '#F1F5FF',
+    padding: 20,
+    backgroundColor: '#1E5CD7',
   },
-  title: {
-    fontSize: 32,
-    textAlign: 'center',
-    marginBottom: 20,
+  logoContainer: {
+    top: '15%',
+    alignItems: 'center',
+  },
+  formContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    width: 330,
+    alignSelf: 'center',
+    marginBottom: 60,
+  },
+  label: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 8,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+  },
+  inputIcon: {
+    backgroundColor: '#041F4E',
+    height: 50,
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
   },
   input: {
+    flex: 1,
     height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingLeft: 8,
-    borderRadius: 4,
+    fontSize: 16,
+    color: '#333333',
   },
   errorText: {
-    color: 'red',
-    marginBottom: 12,
+    color: '#EF4444',
     textAlign: 'center',
+    marginBottom: 12,
+  },
+  loadingIndicator: {
+    marginVertical: 16,
+  },
+  button: {
+    width: 330,
+    height: 55,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 16,
+    marginTop: 20,
+  },
+  signUpButton: {
+    backgroundColor: '#041F4E',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  bottomContainer: {
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: '100%',
+  },
+  signupText: {
+    textAlign: 'center',
+    color: '#FFFFFF',
+    fontSize: 16,
+    marginBottom: 18,
   },
 });
 
