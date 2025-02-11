@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import TimeTrax from '../assets/login/TimeTrax';
+import EmailIcon from '../assets/login/EmailIcon';
+import PasswordIcon from '../assets/login/PasswordIcon';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -42,23 +44,35 @@ const LoginScreen = ({navigation}) => {
 
       <View style={styles.formContainer}>
         <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+        <View style={styles.inputWrapper}>
+          <View style={styles.inputIcon}>
+            <EmailIcon />
+          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            placeholderTextColor="#979797"
+          />
+        </View>
 
         <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View style={styles.inputWrapper}>
+          <View style={styles.inputIcon}>
+            <PasswordIcon />
+          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            placeholderTextColor="#979797"
+          />
+        </View>
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -113,20 +127,27 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginBottom: 8,
   },
-  input: {
-    width: 330,
-    height: 55,
-    borderColor: '#D1D5DB',
-    borderWidth: 1,
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 16,
-    paddingHorizontal: 12,
     borderRadius: 8,
     backgroundColor: '#FFFFFF',
+  },
+  inputIcon: {
+    backgroundColor: '#041F4E',
+    height: 50,
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
+  input: {
+    flex: 1,
+    height: 50,
     fontSize: 16,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    elevation: 2,
+    color: '#333333',
   },
   errorText: {
     color: '#EF4444',
