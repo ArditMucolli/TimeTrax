@@ -6,23 +6,25 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {launchImageLibrary} from 'react-native-image-picker';
 import TimeTrax from '../assets/login/TimeTrax';
-import EmailIcon from '../assets/login/EmailIcon';
-import PasswordIcon from '../assets/login/PasswordIcon';
-import ShowPassword from '../assets/login/ShowPassword';
 
 const SignUpScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [job, setJob] = useState('');
+  const [profileImage, setProfileImage] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignUp = async () => {
-    if (!email || !password) {
-      setError('Please enter both email and password');
+    if (!email || !password || !fullName || !job) {
+      setError('Please fill in all required fields.');
       return;
     }
 
@@ -30,95 +32,111 @@ const SignUpScreen = ({navigation}) => {
     setError('');
 
     try {
-      await auth().createUserWithEmailAndPassword(email, password);
+      const userCredential = await auth().createUserWithEmailAndPassword(
+        email,
+        password,
+      );
+      const {uid} = userCredential.user;
+
+      await firestore()
+        .collection('users')
+        .doc(uid)
+        .set({
+          fullName,
+          email,
+          job,
+          profileImage: profileImage || null,
+          uid,
+          createdAt: firestore.FieldValue.serverTimestamp(),
+        });
+
       navigation.replace('Homepage');
     } catch (err) {
-      switch (err.code) {
-        case 'auth/email-already-in-use':
-          setError('This email is already in use.');
-          break;
-        case 'auth/invalid-email':
-          setError('Invalid email format.');
-          break;
-        case 'auth/weak-password':
-          setError('Password should be at least 6 characters.');
-          break;
-        default:
-          setError('Error creating account. Please try again.');
-      }
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleImageSelect = () => {
+    launchImageLibrary({mediaType: 'photo', includeBase64: false}, response => {
+      if (response.didCancel) return;
+      if (response.assets && response.assets.length > 0) {
+        setProfileImage(response.assets[0].uri);
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <TimeTrax />
+      <View style={styles.iconContainer}>
+        <TimeTrax width={150} height={40} />
+      </View>
+
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Create an Account</Text>
       </View>
 
       <View style={styles.formContainer}>
+        <Text style={styles.label}>Full Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your full name"
+          value={fullName}
+          onChangeText={setFullName}
+        />
+
         <Text style={styles.label}>Email</Text>
-        <View style={styles.inputWrapper}>
-          <View style={styles.inputIcon}>
-            <EmailIcon />
-          </View>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            placeholderTextColor="#979797"
-          />
-        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
 
         <Text style={styles.label}>Password</Text>
-        <View style={styles.inputWrapper}>
-          <View style={styles.inputIcon}>
-            <PasswordIcon />
-          </View>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-            placeholderTextColor="#979797"
-          />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        <Text style={styles.label}>Job</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your job"
+          value={job}
+          onChangeText={setJob}
+        />
+        <View style={styles.imageContainer}>
           <TouchableOpacity
-            style={styles.eyeIconContainer}
-            onPress={() => setShowPassword(!showPassword)}>
-            <ShowPassword
-              name={showPassword ? 'eye-off' : 'eye'}
-              size={24}
-              color="#979797"
-            />
+            onPress={handleImageSelect}
+            style={styles.imageWrapper}>
+            {profileImage ? (
+              <Image source={{uri: profileImage}} style={styles.profileImage} />
+            ) : (
+              <Text style={styles.imagePlaceholder}>+ Add Profile Image</Text>
+            )}
           </TouchableOpacity>
         </View>
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-        {loading && (
-          <ActivityIndicator
-            size="large"
-            color="#1C3D69"
-            style={styles.loadingIndicator}
-          />
-        )}
+        {loading && <ActivityIndicator size="large" color="#1C3D69" />}
 
         <TouchableOpacity
-          style={[styles.button, styles.signUpButton]}
+          style={styles.signUpButton}
           onPress={handleSignUp}
           disabled={loading}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
-      </View>
 
-      <View style={styles.bottomContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.signupText}>Already have an account? Login</Text>
+          <Text style={styles.switchText}>Already have an account? Login</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -128,91 +146,89 @@ const SignUpScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#1E5CD7',
+    paddingHorizontal: 20,
+    justifyContent: 'center',
   },
-  logoContainer: {
-    top: '5%',
+  iconContainer: {
     alignItems: 'center',
+    marginBottom: 10,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
   formContainer: {
-    flex: 1,
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  imageContainer: {
+    marginBottom: 20,
+  },
+  imageWrapper: {
+    width: 200,
+    height: 50,
+    borderRadius: 8,
+    backgroundColor: '#E0E0E0',
     justifyContent: 'center',
-    width: 330,
-    alignSelf: 'center',
-    marginBottom: 60,
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 50,
+  },
+  imagePlaceholder: {
+    color: '#555',
+    fontSize: 12,
+    textAlign: 'center',
   },
   label: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-  },
-  inputIcon: {
-    backgroundColor: '#041F4E',
-    height: 50,
-    width: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8,
+    alignSelf: 'flex-start',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 5,
+    color: '#333',
   },
   input: {
-    flex: 1,
+    width: '100%',
     height: 50,
+    borderRadius: 8,
+    backgroundColor: '#F1F1F1',
+    paddingHorizontal: 15,
     fontSize: 16,
-    color: '#333333',
+    marginBottom: 15,
   },
   errorText: {
-    color: '#EF4444',
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  loadingIndicator: {
-    marginVertical: 16,
-  },
-  button: {
-    width: 330,
-    height: 55,
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 16,
-    marginTop: 20,
+    color: '#E63946',
+    marginBottom: 10,
   },
   signUpButton: {
+    width: '100%',
+    height: 50,
     backgroundColor: '#041F4E',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    marginTop: 10,
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
-  bottomContainer: {
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginBottom: 20,
-    width: '100%',
-  },
-  signupText: {
-    textAlign: 'center',
-    color: '#FFFFFF',
-    fontSize: 16,
-    marginBottom: 18,
-  },
-  eyeIconContainer: {
-    position: 'absolute',
-    right: 10,
-    top: 12,
+  switchText: {
+    color: '#1E5CD7',
+    fontSize: 14,
+    marginTop: 15,
   },
 });
 
