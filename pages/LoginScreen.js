@@ -11,12 +11,14 @@ import auth from '@react-native-firebase/auth';
 import TimeTrax from '../assets/login/TimeTrax';
 import EmailIcon from '../assets/login/EmailIcon';
 import PasswordIcon from '../assets/login/PasswordIcon';
+import ShowPassword from '../assets/login/ShowPassword';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -86,9 +88,18 @@ const LoginScreen = ({navigation}) => {
             placeholder="Enter your password"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
+            secureTextEntry={!showPassword}
             placeholderTextColor="#979797"
           />
+          <TouchableOpacity
+            style={styles.eyeIconContainer}
+            onPress={() => setShowPassword(!showPassword)}>
+            <ShowPassword
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={24}
+              color="#979797"
+            />
+          </TouchableOpacity>
         </View>
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -218,6 +229,11 @@ const styles = StyleSheet.create({
   contactText: {
     color: '#FFFFFF',
     fontSize: 16,
+  },
+  eyeIconContainer: {
+    position: 'absolute',
+    right: 10,
+    top: 12,
   },
 });
 
