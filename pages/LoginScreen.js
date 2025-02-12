@@ -23,8 +23,10 @@ const LoginScreen = ({navigation}) => {
       setError('Please enter both email and password');
       return;
     }
+
     setLoading(true);
     setError('');
+
     try {
       await auth().signInWithEmailAndPassword(email, password);
       navigation.replace('Homepage');
