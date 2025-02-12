@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -18,12 +19,13 @@ const SignUpScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [job, setJob] = useState('');
+  const [jobType, setJobType] = useState('full-time'); // Default value
   const [profileImage, setProfileImage] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
-    if (!email || !password || !fullName || !job) {
+    if (!email || !password || !fullName || !job || !jobType) {
       setError('Please fill in all required fields.');
       return;
     }
@@ -45,6 +47,7 @@ const SignUpScreen = ({navigation}) => {
           fullName,
           email,
           job,
+          jobType,
           profileImage: profileImage || null,
           uid,
           createdAt: firestore.FieldValue.serverTimestamp(),
@@ -60,7 +63,9 @@ const SignUpScreen = ({navigation}) => {
 
   const handleImageSelect = () => {
     launchImageLibrary({mediaType: 'photo', includeBase64: false}, response => {
-      if (response.didCancel) return;
+      if (response.didCancel) {
+        return;
+      }
       if (response.assets && response.assets.length > 0) {
         setProfileImage(response.assets[0].uri);
       }
@@ -112,6 +117,18 @@ const SignUpScreen = ({navigation}) => {
           value={job}
           onChangeText={setJob}
         />
+
+        <Text style={styles.label}>Job Type</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={jobType}
+            onValueChange={itemValue => setJobType(itemValue)}
+            style={styles.picker}>
+            <Picker.Item label="Full-Time" value="full-time" />
+            <Picker.Item label="Part-Time" value="part-time" />
+          </Picker>
+        </View>
+
         <View style={styles.imageContainer}>
           <TouchableOpacity
             onPress={handleImageSelect}
@@ -168,6 +185,18 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
+  },
+  pickerContainer: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#CCC',
+    borderRadius: 8,
+    marginBottom: 15,
+    backgroundColor: '#F1F1F1',
+  },
+  picker: {
+    height: 50,
+    width: '100%',
   },
   imageContainer: {
     marginBottom: 20,
