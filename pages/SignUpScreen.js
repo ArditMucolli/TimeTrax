@@ -25,12 +25,25 @@ const SignUpScreen = ({navigation}) => {
     }
 
     setLoading(true);
+    setError('');
+
     try {
       await auth().createUserWithEmailAndPassword(email, password);
       navigation.replace('Homepage');
     } catch (err) {
-      console.error('Sign Up Error:', err);
-      setError('Error creating account. Please try again.');
+      switch (err.code) {
+        case 'auth/email-already-in-use':
+          setError('This email is already in use.');
+          break;
+        case 'auth/invalid-email':
+          setError('Invalid email format.');
+          break;
+        case 'auth/weak-password':
+          setError('Password should be at least 6 characters.');
+          break;
+        default:
+          setError('Error creating account. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

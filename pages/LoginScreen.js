@@ -23,14 +23,29 @@ const LoginScreen = ({navigation}) => {
       setError('Please enter both email and password');
       return;
     }
-
     setLoading(true);
+    setError('');
     try {
       await auth().signInWithEmailAndPassword(email, password);
       navigation.replace('Homepage');
     } catch (err) {
-      console.error('Login Error:', err);
-      setError('Error logging in. Please check your credentials.');
+      switch (err.code) {
+        case 'auth/invalid-email':
+          setError('Invalid email format.');
+          break;
+        case 'auth/user-not-found':
+          setError('No account found with this email.');
+          break;
+        case 'auth/wrong-password':
+          setError('Incorrect password. Please try again.');
+          break;
+        case 'auth/too-many-requests':
+          setError('Too many failed attempts. Try again later.');
+          break;
+        default:
+          setError('Error logging in. Please try again.');
+          break;
+      }
     } finally {
       setLoading(false);
     }
