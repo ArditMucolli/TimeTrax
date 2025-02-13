@@ -18,15 +18,28 @@ const Stack = createStackNavigator();
 
 const App = () => {
   const [user, setUser] = useState(null);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(setUser);
-    return () => unsubscribe();
+    const unsubscribe = auth().onAuthStateChanged(authUser => {
+      setUser(authUser);
+      if (authUser) {
+        setJustLoggedIn(true);
+      }
+    });
+    return unsubscribe;
   }, []);
 
   return (
     <NavigationContainer>
-      {user ? <AuthenticatedStack /> : <UnauthenticatedStack />}
+      {user ? (
+        <AuthenticatedStack
+          justLoggedIn={justLoggedIn}
+          setJustLoggedIn={setJustLoggedIn}
+        />
+      ) : (
+        <UnauthenticatedStack />
+      )}
     </NavigationContainer>
   );
 };
@@ -40,11 +53,10 @@ const UnauthenticatedStack = () => (
   </Stack.Navigator>
 );
 
-const AuthenticatedStack = () => {
+const AuthenticatedStack = ({justLoggedIn, setJustLoggedIn}) => {
   const routeName = useNavigationState(
     state => state?.routes[state.index]?.name,
   );
-
   const shouldHideFooter = routeName === 'Filter';
 
   return (
@@ -55,14 +67,21 @@ const AuthenticatedStack = () => {
           headerShown: false,
           cardStyle: {backgroundColor: '#F1F5FF'},
         }}>
-        <Stack.Screen name="Homepage" component={Homepage} />
+        <Stack.Screen name="Homepage">
+          {props => (
+            <Homepage
+              {...props}
+              justLoggedIn={justLoggedIn}
+              setJustLoggedIn={setJustLoggedIn}
+            />
+          )}
+        </Stack.Screen>
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Leaves" component={LeavesScreen} />
         <Stack.Screen name="New Leave" component={NewLeaveScreen} />
         <Stack.Screen name="Payslip" component={PayslipScreen} />
         <Stack.Screen name="Filter" component={FilterScreen} />
       </Stack.Navigator>
-
       {!shouldHideFooter && <Footer />}
     </View>
   );

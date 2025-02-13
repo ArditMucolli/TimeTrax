@@ -31,27 +31,31 @@ const LoginScreen = ({navigation}) => {
 
     try {
       await auth().signInWithEmailAndPassword(email, password);
-      navigation.replace('Homepage');
+      navigation.navigate('Homepage', {loginSuccess: true});
     } catch (err) {
-      switch (err.code) {
-        case 'auth/invalid-email':
-          setError('Invalid email format.');
-          break;
-        case 'auth/user-not-found':
-          setError('No account found with this email.');
-          break;
-        case 'auth/wrong-password':
-          setError('Incorrect password. Please try again.');
-          break;
-        case 'auth/too-many-requests':
-          setError('Too many failed attempts. Try again later.');
-          break;
-        default:
-          setError('Error logging in. Please try again.');
-          break;
-      }
+      handleError(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleError = err => {
+    switch (err.code) {
+      case 'auth/invalid-email':
+        setError('Invalid email format.');
+        break;
+      case 'auth/user-not-found':
+        setError('No account found with this email.');
+        break;
+      case 'auth/wrong-password':
+        setError('Incorrect password. Please try again.');
+        break;
+      case 'auth/too-many-requests':
+        setError('Too many failed attempts. Try again later.');
+        break;
+      default:
+        setError('Error logging in. Please try again.');
+        break;
     }
   };
 
