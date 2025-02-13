@@ -1,7 +1,8 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import auth from '@react-native-firebase/auth'; // Firebase auth import
+import auth from '@react-native-firebase/auth';
+import useUserData from '../hooks/useUserData';
 import ArrowLeft from '../assets/ArrowLeft';
 import LogOutIcon from '../assets/profile/LogOutIcon';
 import ProfileDetails from '../components/ProfileDetails';
@@ -11,6 +12,7 @@ import Reimbursement from '../assets/profile/Reimbursement';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
+  const {userData, loading} = useUserData();
 
   const navigateToScreen = screenName => {
     navigation.navigate(screenName);
@@ -21,18 +23,13 @@ const ProfileScreen = () => {
       'Confirm Logout',
       'Are you sure you want to log out?',
       [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
+        {text: 'Cancel', style: 'cancel'},
         {
           text: 'Yes',
           onPress: () => {
             auth()
               .signOut()
-              .then(() => {
-                console.log('User logged out');
-              })
+              .then(() => console.log('User logged out'))
               .catch(error => console.error('Logout error:', error));
           },
         },
@@ -40,6 +37,14 @@ const ProfileScreen = () => {
       {cancelable: true},
     );
   };
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (!userData) {
+    return <Text>User data not found</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -55,13 +60,15 @@ const ProfileScreen = () => {
           <LogOutIcon />
         </TouchableOpacity>
       </View>
+
       <ProfileDetails
-        name="Douglas D. Felice"
-        status="Part-time"
-        job="Bartender"
-        joined="2022"
+        name={userData.fullName}
+        status={userData.jobType}
+        job={userData.job}
+        joined={new Date(userData.createdAt.seconds * 1000).getFullYear()}
         points="20,345"
       />
+
       <View style={styles.infoSection}>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Time Off</Text>
@@ -78,6 +85,7 @@ const ProfileScreen = () => {
           <Text style={styles.infoValue}>12</Text>
         </View>
       </View>
+
       <View style={styles.actionRowsContainer}>
         <TouchableOpacity
           style={styles.myPayslipRow}
