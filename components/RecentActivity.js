@@ -69,13 +69,9 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     padding: 20,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   text: {
     fontSize: 16,
-    textAlign: 'center',
     padding: 10,
     color: '#041F4E',
     fontWeight: '600',

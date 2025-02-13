@@ -19,7 +19,7 @@ const SignUpScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [job, setJob] = useState('');
-  const [jobType, setJobType] = useState('full-time'); // Default value
+  const [jobType, setJobType] = useState('Full Time'); // Default value
   const [profileImage, setProfileImage] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -125,7 +125,7 @@ const SignUpScreen = ({navigation}) => {
             onValueChange={itemValue => setJobType(itemValue)}
             style={styles.picker}>
             <Picker.Item label="Full Time" value="Full Time" />
-            <Picker.Item label="Part Time" value="Part Timee" />
+            <Picker.Item label="Part Time" value="Part Time" />
           </Picker>
         </View>
 
