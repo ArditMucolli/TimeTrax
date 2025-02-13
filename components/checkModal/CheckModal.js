@@ -1,24 +1,18 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-} from 'react-native';
+import {Modal, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import CheckInModal from '../../assets/checkIn-modals/CheckInModal';
 import Timer from './Timer';
 import ActionButtons from './ActionButtons';
 import ConfirmationModal from './ConfirmationModal';
 import X from '../../assets/X';
+import firestore from '@react-native-firebase/firestore';
+import {getAuth} from '@react-native-firebase/auth';
 
 const CheckModal = ({visible, onClose}) => {
   const [timerStarted, setTimerStarted] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
   const [isOnBreak, setIsOnBreak] = useState(false);
-  const [breakReason, setBreakReason] = useState('');
   const [showCheckOutConfirmation, setShowCheckOutConfirmation] =
     useState(false);
 
@@ -50,13 +44,37 @@ const CheckModal = ({visible, onClose}) => {
     setShowCheckOutConfirmation(true);
   }, []);
 
-  const confirmCheckOut = useCallback(() => {
+  const confirmCheckOut = useCallback(async () => {
     stopTimer();
     setIsOnBreak(false);
-    setElapsedTime(0);
-    setShowCheckOutConfirmation(false);
-    onClose();
-  }, [stopTimer, onClose]);
+
+    const user = getAuth().currentUser;
+
+    if (user) {
+      const checkInData = {
+        userId: user.uid,
+        startTime: new Date(Date.now() - elapsedTime * 1000).toISOString(),
+        endTime: new Date().toISOString(),
+        totalDuration: elapsedTime,
+        timestamp: new Date().toISOString(),
+      };
+
+      try {
+        await firestore().collection('checkIns').add(checkInData);
+        console.log('Check-in data saved:', checkInData);
+      } catch (error) {
+        console.error('Error saving check-in data:', error.message);
+        console.error('Full Error:', error);
+        alert('Failed to save check-in data');
+      }
+
+      setElapsedTime(0);
+      setShowCheckOutConfirmation(false);
+      onClose();
+    } else {
+      console.error('No user is logged in');
+    }
+  }, [stopTimer, elapsedTime, onClose]);
 
   const cancelCheckOut = useCallback(() => {
     setShowCheckOutConfirmation(false);
@@ -115,21 +133,6 @@ const CheckModal = ({visible, onClose}) => {
                 isOnBreak={isOnBreak}
               />
             )}
-
-            {timerStarted && !isOnBreak && !showCheckOutConfirmation && (
-              <View style={styles.reasonStyle}>
-                <Text style={styles.reasonTitle}>Select Reason *</Text>
-                <Text style={styles.reasonText}>
-                  Please select one reason to pause your work
-                </Text>
-                <TextInput
-                  style={styles.dropdown}
-                  value={breakReason}
-                  onChangeText={setBreakReason}
-                  placeholder="Select Reason"
-                />
-              </View>
-            )}
           </View>
         </View>
       </View>
@@ -181,30 +184,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  reasonStyle: {
-    marginTop: 20,
-  },
-  reasonTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#252525',
-  },
-  reasonText: {
-    marginTop: 5,
-    marginBottom: 10,
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: '#252525',
-  },
-  dropdown: {
-    marginTop: 10,
-    height: 45,
-    width: 330,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingLeft: 10,
   },
 });
 

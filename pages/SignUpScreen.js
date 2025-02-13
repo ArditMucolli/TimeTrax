@@ -124,8 +124,8 @@ const SignUpScreen = ({navigation}) => {
             selectedValue={jobType}
             onValueChange={itemValue => setJobType(itemValue)}
             style={styles.picker}>
-            <Picker.Item label="Full-Time" value="full-time" />
-            <Picker.Item label="Part-Time" value="part-time" />
+            <Picker.Item label="Full Time" value="Full Time" />
+            <Picker.Item label="Part Time" value="Part Timee" />
           </Picker>
         </View>
 
