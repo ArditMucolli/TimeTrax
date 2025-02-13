@@ -7,18 +7,16 @@ const useUserData = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get the current authenticated user
     const currentUser = getAuth().currentUser;
 
     if (currentUser) {
-      // Fetch the user data from Firestore
       firestore()
-        .collection('users') // Assuming 'users' is your Firestore collection
-        .doc(currentUser.uid) // Use the logged-in user's UID
+        .collection('users')
+        .doc(currentUser.uid)
         .get()
         .then(documentSnapshot => {
           if (documentSnapshot.exists) {
-            setUserData(documentSnapshot.data()); // Set the user data
+            setUserData(documentSnapshot.data());
             setLoading(false);
           } else {
             setUserData(null);
