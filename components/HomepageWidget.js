@@ -56,44 +56,28 @@ const HomepageWidget = ({userId}) => {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        {lastActivities.length >= 1 && (
+        {lastActivities.slice(0, 2).map((activity, index) => (
           <StatusWidget
-            Time={lastActivities[0].time}
-            Icon={<CheckIn />}
-            Title="Check In"
-            Status={lastActivities[0].status}
-            Points="+150pt"
+            key={index}
+            Time={activity.time}
+            Icon={activity.title === 'Check In' ? <CheckIn /> : <CheckOut />}
+            Title={activity.title}
+            Status="On time"
+            Points={activity.title === 'Check In' ? '+150pt' : '+100pt'}
           />
-        )}
-        {lastActivities.length >= 2 && (
-          <StatusWidget
-            Time={lastActivities[1].time}
-            Icon={<CheckOut />}
-            Title="Check Out"
-            Status={lastActivities[1].status}
-            Points="+100pt"
-          />
-        )}
+        ))}
       </View>
       <View style={styles.row}>
-        {lastActivities.length >= 3 && (
+        {lastActivities.slice(2, 4).map((activity, index) => (
           <StatusWidget
-            Time={lastActivities[2].time}
-            Icon={<CheckIn />}
-            Title="Check In"
-            Status={lastActivities[2].status}
-            Points="+150pt"
+            key={index + 2}
+            Time={activity.time}
+            Icon={activity.title === 'Check In' ? <CheckIn /> : <CheckOut />}
+            Title={activity.title}
+            Status="On time"
+            Points={activity.title === 'Check In' ? '+150pt' : '+100pt'}
           />
-        )}
-        {lastActivities.length >= 4 && (
-          <StatusWidget
-            Time={lastActivities[3].time}
-            Icon={<CheckOut />}
-            Title="Check Out"
-            Status={lastActivities[3].status}
-            Points="+100pt"
-          />
-        )}
+        ))}
       </View>
     </View>
   );
