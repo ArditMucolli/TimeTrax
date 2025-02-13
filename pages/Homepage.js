@@ -3,9 +3,18 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import Header from '../components/Header';
 import HomepageWidget from '../components/HomepageWidget';
 import RecentActivity from '../components/RecentActivity';
+import auth from '@react-native-firebase/auth'; // Import Firebase auth
 
 const Homepage = ({justLoggedIn, setJustLoggedIn}) => {
   const [showMessage, setShowMessage] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const currentUser = auth().currentUser;
+    if (currentUser) {
+      setUserId(currentUser.uid); // Set the logged-in user's ID
+    }
+  }, []);
 
   useEffect(() => {
     if (justLoggedIn) {
@@ -32,7 +41,7 @@ const Homepage = ({justLoggedIn, setJustLoggedIn}) => {
           <HomepageWidget />
         </View>
         <View style={styles.activitySection}>
-          <RecentActivity />
+          {userId && <RecentActivity userId={userId} />}
         </View>
       </ScrollView>
     </View>
