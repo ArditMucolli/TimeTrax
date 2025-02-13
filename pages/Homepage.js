@@ -12,7 +12,7 @@ const Homepage = ({justLoggedIn, setJustLoggedIn}) => {
   useEffect(() => {
     const currentUser = auth().currentUser;
     if (currentUser) {
-      setUserId(currentUser.uid); // Set the logged-in user's ID
+      setUserId(currentUser.uid);
     }
   }, []);
 
@@ -38,7 +38,7 @@ const Homepage = ({justLoggedIn, setJustLoggedIn}) => {
       <Header Title="Homepage" />
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.widgetSection}>
-          <HomepageWidget />
+          {userId && <HomepageWidget userId={userId} />}
         </View>
         <View style={styles.activitySection}>
           {userId && <RecentActivity userId={userId} />}

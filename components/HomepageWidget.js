@@ -1,44 +1,99 @@
-import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import StatusWidget from './StatusWidget'; // Import widget
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, Text} from 'react-native';
+import StatusWidget from './StatusWidget';
 import CheckIn from '../assets/statusWidget/CheckIn';
 import CheckOut from '../assets/statusWidget/CheckOut';
-import StartOvertime from '../assets/statusWidget/StartOvertime';
-import FinishOvertime from '../assets/statusWidget/FinishOvertime';
+import useCheckIns from '../hooks/useCheckIns';
 
-const HomepageWidget = () => {
+const HomepageWidget = ({userId}) => {
+  const {checkIns, loading, error} = useCheckIns(userId);
+  const [lastActivities, setLastActivities] = useState([]);
+
+  const formatTime = timestamp => {
+    if (!timestamp) {
+      return 'N/A';
+    }
+    let date;
+    if (timestamp.seconds) {
+      date = new Date(timestamp.seconds * 1000);
+    } else {
+      date = new Date(timestamp);
+    }
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
+
+  useEffect(() => {
+    if (checkIns && checkIns.length > 0) {
+      const sortedCheckIns = checkIns.sort(
+        (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
+      );
+      const activities = sortedCheckIns.slice(0, 4).map(checkIn => {
+        const time = formatTime(
+          checkIn.status === 'Check In' ? checkIn.startTime : checkIn.endTime,
+        );
+        return {
+          title: checkIn.status,
+          time,
+          status: checkIn.status,
+        };
+      });
+
+      setLastActivities(activities);
+    }
+  }, [checkIns]);
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+  if (error) {
+    return <Text>Error: {error.message}</Text>;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <StatusWidget
-          Time="09:30 am"
-          Icon={<CheckIn />}
-          Title="Check In"
-          Status="On time"
-          Points="+150pt"
-        />
-        <StatusWidget
-          Time="09:30 am"
-          Icon={<CheckOut />}
-          Title="Check Out"
-          Status="On time"
-          Points="+100pt"
-        />
+        {lastActivities.length >= 1 && (
+          <StatusWidget
+            Time={lastActivities[0].time}
+            Icon={<CheckIn />}
+            Title="Check In"
+            Status={lastActivities[0].status}
+            Points="+150pt"
+          />
+        )}
+        {lastActivities.length >= 2 && (
+          <StatusWidget
+            Time={lastActivities[1].time}
+            Icon={<CheckOut />}
+            Title="Check Out"
+            Status={lastActivities[1].status}
+            Points="+100pt"
+          />
+        )}
       </View>
       <View style={styles.row}>
-        <StatusWidget
-          Time="09:30 am"
-          Icon={<StartOvertime />}
-          Title="Start Overtime"
-          Status="Project revision from..."
-        />
-        <StatusWidget
-          Time="09:30 am"
-          Icon={<FinishOvertime />}
-          Title="Finish Overtime"
-          Status="5h 00m"
-          Points="+35$"
-        />
+        {lastActivities.length >= 3 && (
+          <StatusWidget
+            Time={lastActivities[2].time}
+            Icon={<CheckIn />}
+            Title="Check In"
+            Status={lastActivities[2].status}
+            Points="+150pt"
+          />
+        )}
+        {lastActivities.length >= 4 && (
+          <StatusWidget
+            Time={lastActivities[3].time}
+            Icon={<CheckOut />}
+            Title="Check Out"
+            Status={lastActivities[3].status}
+            Points="+100pt"
+          />
+        )}
       </View>
     </View>
   );

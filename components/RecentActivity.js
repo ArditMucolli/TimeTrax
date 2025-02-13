@@ -15,7 +15,11 @@ const RecentActivity = ({userId}) => {
     return <Text>Error: {error.message}</Text>;
   }
   if (!checkIns || checkIns.length === 0) {
-    return <Text>No recent activity found.</Text>;
+    return (
+      <View style={styles.container}>
+        <Text style={styles.noActivityText}>No recent activity found.</Text>
+      </View>
+    );
   }
 
   return (
@@ -65,12 +69,22 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     padding: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text: {
     fontSize: 16,
+    textAlign: 'center',
     padding: 10,
     color: '#041F4E',
     fontWeight: '600',
+  },
+  noActivityText: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#041F4E',
+    fontWeight: '500',
   },
 });
 
