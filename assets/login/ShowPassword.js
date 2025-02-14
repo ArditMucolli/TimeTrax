@@ -1,27 +1,61 @@
 import * as React from 'react';
-import Svg, {G, Path, Defs, ClipPath, Rect} from 'react-native-svg';
+import Svg, {Defs, G, Path} from 'react-native-svg';
 const ShowPassword = props => (
   <Svg
-    width={20}
-    height={20}
-    viewBox="0 0 20 20"
-    fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+    width={24}
+    height={24}
+    viewBox="0 0 256 256"
+    xmlSpace="preserve"
     {...props}>
-    <G clipPath="url(#clip0_50_451)">
+    <Defs />
+    <G
+      style={{
+        stroke: '#979797',
+        strokeWidth: 0,
+        strokeDasharray: 'none',
+        strokeLinecap: 'butt',
+        strokeLinejoin: 'miter',
+        strokeMiterlimit: 10,
+        fill: '#979797',
+        fillRule: 'nonzero',
+        opacity: 1,
+      }}
+      transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
       <Path
-        d="M12.1083 7.89166L7.89167 12.1083M12.1083 7.89166C11.5492 7.33249 10.7908 7.01836 10 7.01836C9.60845 7.01836 9.22073 7.09548 8.85898 7.24532C8.49723 7.39516 8.16854 7.61479 7.89167 7.89166C7.6148 8.16853 7.39518 8.49722 7.24533 8.85897C7.09549 9.22072 7.01837 9.60844 7.01837 9.99999C7.01837 10.7908 7.33251 11.5492 7.89167 12.1083M12.1083 7.89166L18.3333 1.66666M7.89167 12.1083L1.66667 18.3333M14.85 4.80832C13.3917 3.70832 11.725 3.10832 10 3.10832C7.05834 3.10832 4.31667 4.84166 2.40834 7.84166C1.65834 9.01666 1.65834 10.9917 2.40834 12.1667C3.06667 13.2 3.83334 14.0917 4.66667 14.8083M7.01667 16.275C7.96667 16.675 8.975 16.8917 10 16.8917C12.9417 16.8917 15.6833 15.1583 17.5917 12.1583C18.3417 10.9833 18.3417 9.00832 17.5917 7.83332C17.3167 7.39999 17.0167 6.99166 16.7083 6.60832M12.925 10.5833C12.8121 11.1646 12.5281 11.6989 12.1094 12.1177C11.6906 12.5364 11.1563 12.8204 10.575 12.9333"
-        stroke="#979797"
-        strokeWidth={1.5}
+        d="M 45 72.864 C 44.999 72.864 45 72.864 45 72.864 c -14.889 0 -29.874 -8.944 -44.538 -26.586 c -0.616 -0.741 -0.616 -1.816 0 -2.557 C 15.126 26.08 30.111 17.135 45 17.135 c 14.889 0 29.874 8.945 44.539 26.586 c 0.616 0.741 0.616 1.816 0 2.557 C 74.874 63.919 59.888 72.864 45 72.864 z M 4.615 45 C 18.128 60.837 31.709 68.864 45 68.864 S 71.872 60.837 85.386 45 C 71.872 29.163 58.29 21.135 45 21.135 S 18.128 29.163 4.615 45 z"
+        style={{
+          stroke: '#979797',
+          strokeWidth: 1,
+          strokeDasharray: 'none',
+          strokeLinecap: 'butt',
+          strokeLinejoin: 'miter',
+          strokeMiterlimit: 10,
+          fill: '#979797',
+          fillRule: 'nonzero',
+          opacity: 1,
+        }}
+        transform=" matrix(1 0 0 1 0 0) "
         strokeLinecap="round"
-        strokeLinejoin="round"
+      />
+      <Path
+        d="M 45 64.103 c -10.533 0 -19.102 -8.569 -19.102 -19.103 c 0 -10.533 8.569 -19.102 19.102 -19.102 c 10.533 0 19.103 8.569 19.103 19.102 C 64.103 55.533 55.533 64.103 45 64.103 z M 45 29.898 c -8.327 0 -15.102 6.775 -15.102 15.102 S 36.673 60.103 45 60.103 S 60.103 53.327 60.103 45 S 53.327 29.898 45 29.898 z"
+        style={{
+          stroke: '#979797',
+          strokeWidth: 1,
+          strokeDasharray: 'none',
+          strokeLinecap: 'butt',
+          strokeLinejoin: 'miter',
+          strokeMiterlimit: 10,
+          fill: '#979797',
+          fillRule: 'nonzero',
+          opacity: 1,
+        }}
+        transform=" matrix(1 0 0 1 0 0) "
+        strokeLinecap="round"
       />
     </G>
-    <Defs>
-      <ClipPath id="clip0_50_451">
-        <Rect width={20} height={20} fill="white" />
-      </ClipPath>
-    </Defs>
   </Svg>
 );
 export default ShowPassword;

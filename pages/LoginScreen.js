@@ -12,6 +12,7 @@ import TimeTrax from '../assets/login/TimeTrax';
 import EmailIcon from '../assets/login/EmailIcon';
 import PasswordIcon from '../assets/login/PasswordIcon';
 import ShowPassword from '../assets/login/ShowPassword';
+import HidePassword from '../assets/login/HidePassword';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -98,11 +99,7 @@ const LoginScreen = ({navigation}) => {
           <TouchableOpacity
             style={styles.eyeIconContainer}
             onPress={() => setShowPassword(!showPassword)}>
-            <ShowPassword
-              name={showPassword ? 'eye-off' : 'eye'}
-              size={24}
-              color="#979797"
-            />
+            {showPassword ? <ShowPassword /> : <HidePassword />}
           </TouchableOpacity>
         </View>
 
