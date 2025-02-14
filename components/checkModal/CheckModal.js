@@ -13,6 +13,7 @@ import ActionButtons from './ActionButtons';
 import ConfirmationModal from './ConfirmationModal';
 import X from '../../assets/X';
 import firestore from '@react-native-firebase/firestore';
+import {useNavigation} from '@react-navigation/native';
 import {getAuth} from '@react-native-firebase/auth';
 
 const CheckModal = ({visible, onClose}) => {
@@ -23,6 +24,7 @@ const CheckModal = ({visible, onClose}) => {
   const [showCheckOutConfirmation, setShowCheckOutConfirmation] =
     useState(false);
   const [checkInDocId, setCheckInDocId] = useState(null);
+  const navigation = useNavigation();
 
   const startTimer = useCallback(() => {
     setTimerStarted(true);
@@ -87,13 +89,10 @@ const CheckModal = ({visible, onClose}) => {
       const totalDuration = elapsedTime;
 
       try {
-        await firestore()
-          .collection('checkIns')
-          .doc(checkInDocId) // Get the document using the saved ID
-          .update({
-            endTime,
-            totalDuration,
-          });
+        await firestore().collection('checkIns').doc(checkInDocId).update({
+          endTime,
+          totalDuration,
+        });
 
         console.log('Check-out data saved:', {endTime, totalDuration});
       } catch (error) {
@@ -104,10 +103,13 @@ const CheckModal = ({visible, onClose}) => {
       setElapsedTime(0);
       setShowCheckOutConfirmation(false);
       onClose();
+
+      // Refresh the screen using React Navigation
+      navigation.replace('Homepage'); // Replace with the same screen to force refresh
     } else {
       console.error('No user is logged in or check-in document not found');
     }
-  }, [stopTimer, elapsedTime, onClose, checkInDocId]);
+  }, [stopTimer, elapsedTime, onClose, checkInDocId, navigation]);
 
   const cancelCheckOut = useCallback(() => {
     setShowCheckOutConfirmation(false);

@@ -8,50 +8,46 @@ const useCheckIns = userId => {
 
   useEffect(() => {
     if (userId) {
-      const fetchCheckIns = async () => {
-        try {
-          setLoading(true);
-          setError(null);
+      const unsubscribe = firestore()
+        .collection('checkIns')
+        .where('userId', '==', userId)
+        .orderBy('startTime', 'desc')
+        .onSnapshot(
+          snapshot => {
+            const checkInData = snapshot.docs.flatMap(doc => {
+              const data = doc.data();
+              const entries = [];
 
-          const checkInsSnapshot = await firestore()
-            .collection('checkIns')
-            .where('userId', '==', userId)
-            .orderBy('startTime', 'desc')
-            .get();
+              if (data.endTime) {
+                entries.push({
+                  ...data,
+                  status: 'Check Out',
+                  time: data.endTime,
+                });
+              }
 
-          const checkInData = checkInsSnapshot.docs.flatMap(doc => {
-            const data = doc.data();
-            const entries = [];
+              if (data.startTime) {
+                entries.push({
+                  ...data,
+                  status: 'Check In',
+                  time: data.startTime,
+                });
+              }
 
-            if (data.endTime) {
-              entries.push({
-                ...data,
-                status: 'Check Out',
-                time: data.endTime,
-              });
-            }
+              return entries;
+            });
 
-            if (data.startTime) {
-              entries.push({
-                ...data,
-                status: 'Check In',
-                time: data.startTime,
-              });
-            }
+            setCheckIns(checkInData);
+            setLoading(false);
+          },
+          err => {
+            setError(err);
+            setLoading(false);
+          },
+        );
 
-            return entries;
-          });
-
-          setCheckIns(checkInData);
-          setLoading(false);
-        } catch (err) {
-          console.error('Error fetching check-in data:', err);
-          setError(err);
-          setLoading(false);
-        }
-      };
-
-      fetchCheckIns();
+      // Cleanup on component unmount
+      return () => unsubscribe();
     } else {
       setLoading(false);
     }
