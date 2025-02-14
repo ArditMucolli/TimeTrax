@@ -1,5 +1,12 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {Modal, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 import CheckInModal from '../../assets/checkIn-modals/CheckInModal';
 import Timer from './Timer';
 import ActionButtons from './ActionButtons';
@@ -15,6 +22,7 @@ const CheckModal = ({visible, onClose}) => {
   const [isOnBreak, setIsOnBreak] = useState(false);
   const [showCheckOutConfirmation, setShowCheckOutConfirmation] =
     useState(false);
+  const [checkInDocId, setCheckInDocId] = useState(null);
 
   const startTimer = useCallback(() => {
     setTimerStarted(true);
@@ -23,6 +31,30 @@ const CheckModal = ({visible, onClose}) => {
       setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
     }, 1000);
     setIntervalId(id);
+
+    // Save check-in data to Firestore
+    const user = getAuth().currentUser;
+    if (user) {
+      const checkInData = {
+        userId: user.uid,
+        startTime: new Date(Date.now() - elapsedTime * 1000).toISOString(),
+        timestamp: new Date().toISOString(),
+      };
+
+      firestore()
+        .collection('checkIns')
+        .add(checkInData)
+        .then(docRef => {
+          setCheckInDocId(docRef.id); // Save the document ID to update it later
+          console.log('Check-in data saved:', checkInData);
+        })
+        .catch(error => {
+          console.error('Error saving check-in data:', error);
+          Alert.alert('Failed to save check-in data');
+        });
+    } else {
+      console.error('No user is logged in');
+    }
   }, [elapsedTime]);
 
   const stopTimer = useCallback(() => {
@@ -50,31 +82,32 @@ const CheckModal = ({visible, onClose}) => {
 
     const user = getAuth().currentUser;
 
-    if (user) {
-      const checkInData = {
-        userId: user.uid,
-        startTime: new Date(Date.now() - elapsedTime * 1000).toISOString(),
-        endTime: new Date().toISOString(),
-        totalDuration: elapsedTime,
-        timestamp: new Date().toISOString(),
-      };
+    if (user && checkInDocId) {
+      const endTime = new Date().toISOString();
+      const totalDuration = elapsedTime;
 
       try {
-        await firestore().collection('checkIns').add(checkInData);
-        console.log('Check-in data saved:', checkInData);
+        await firestore()
+          .collection('checkIns')
+          .doc(checkInDocId) // Get the document using the saved ID
+          .update({
+            endTime,
+            totalDuration,
+          });
+
+        console.log('Check-out data saved:', {endTime, totalDuration});
       } catch (error) {
-        console.error('Error saving check-in data:', error.message);
-        console.error('Full Error:', error);
-        alert('Failed to save check-in data');
+        console.error('Error updating check-out data:', error);
+        Alert.alert('Failed to save check-out data');
       }
 
       setElapsedTime(0);
       setShowCheckOutConfirmation(false);
       onClose();
     } else {
-      console.error('No user is logged in');
+      console.error('No user is logged in or check-in document not found');
     }
-  }, [stopTimer, elapsedTime, onClose]);
+  }, [stopTimer, elapsedTime, onClose, checkInDocId]);
 
   const cancelCheckOut = useCallback(() => {
     setShowCheckOutConfirmation(false);

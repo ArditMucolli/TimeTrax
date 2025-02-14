@@ -19,23 +19,30 @@ const useCheckIns = userId => {
             .orderBy('startTime', 'desc')
             .get();
 
-          const checkInData = checkInsSnapshot.docs.map(doc => {
+          const checkInData = checkInsSnapshot.docs.flatMap(doc => {
             const data = doc.data();
-            return [
-              {
+            const entries = [];
+
+            if (data.endTime) {
+              entries.push({
                 ...data,
                 status: 'Check Out',
                 time: data.endTime,
-              },
-              {
+              });
+            }
+
+            if (data.startTime) {
+              entries.push({
                 ...data,
                 status: 'Check In',
                 time: data.startTime,
-              },
-            ];
+              });
+            }
+
+            return entries;
           });
 
-          setCheckIns(checkInData.flat());
+          setCheckIns(checkInData);
           setLoading(false);
         } catch (err) {
           console.error('Error fetching check-in data:', err);

@@ -10,15 +10,7 @@ const HomepageWidget = ({userId}) => {
   const [lastActivities, setLastActivities] = useState([]);
 
   const formatTime = timestamp => {
-    if (!timestamp) {
-      return 'N/A';
-    }
-    let date;
-    if (timestamp.seconds) {
-      date = new Date(timestamp.seconds * 1000);
-    } else {
-      date = new Date(timestamp);
-    }
+    const date = new Date(timestamp);
     return date.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
@@ -28,19 +20,15 @@ const HomepageWidget = ({userId}) => {
 
   useEffect(() => {
     if (checkIns && checkIns.length > 0) {
-      const sortedCheckIns = checkIns.sort(
-        (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
+      const sortedCheckIns = [...checkIns].sort(
+        (a, b) => new Date(b.time) - new Date(a.time),
       );
-      const activities = sortedCheckIns.slice(0, 4).map(checkIn => {
-        const time = formatTime(
-          checkIn.status === 'Check In' ? checkIn.startTime : checkIn.endTime,
-        );
-        return {
-          title: checkIn.status,
-          time,
-          status: checkIn.status,
-        };
-      });
+
+      const activities = sortedCheckIns.slice(0, 4).map(checkIn => ({
+        title: checkIn.status,
+        time: formatTime(checkIn.time),
+        status: checkIn.status,
+      }));
 
       setLastActivities(activities);
     }
@@ -51,6 +39,9 @@ const HomepageWidget = ({userId}) => {
   }
   if (error) {
     return <Text>Error: {error.message}</Text>;
+  }
+  if (lastActivities.length === 0) {
+    return <Text>No recent activities available.</Text>;
   }
 
   return (
