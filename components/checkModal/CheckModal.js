@@ -116,8 +116,47 @@ const CheckModal = ({visible, onClose}) => {
   }, []);
 
   useEffect(() => {
-    return () => clearInterval(intervalId);
-  }, [intervalId]);
+    const fetchCheckInStatus = async () => {
+      const user = getAuth().currentUser;
+      if (!user) {
+        return;
+      }
+
+      const snapshot = await firestore()
+        .collection('checkIns')
+        .where('userId', '==', user.uid)
+        .orderBy('startTime', 'desc')
+        .limit(1)
+        .get();
+
+      if (!snapshot.empty) {
+        const lastCheckIn = snapshot.docs[0].data();
+
+        if (!lastCheckIn.endTime) {
+          const startTime = new Date(lastCheckIn.startTime).getTime();
+          const elapsed = Math.floor((Date.now() - startTime) / 1000);
+
+          setElapsedTime(elapsed);
+          setTimerStarted(true);
+          setCheckInDocId(snapshot.docs[0].id);
+
+          const id = setInterval(() => {
+            setElapsedTime(prev => prev + 1);
+          }, 1000);
+          setIntervalId(id);
+        }
+      }
+    };
+
+    fetchCheckInStatus();
+
+    // Cleanup function: Clear interval when modal is closed or intervalId changes
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [intervalId, visible]);
 
   return (
     <Modal
