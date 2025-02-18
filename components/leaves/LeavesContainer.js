@@ -2,6 +2,13 @@ import React from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 import ArrowRight from '../../assets/ArrowRight';
 
+// Helper function to format dates
+const formatDate = dateString => {
+  const date = new Date(dateString);
+  const options = {weekday: 'short', day: 'numeric', month: 'short'};
+  return date.toLocaleDateString('en-US', options);
+};
+
 const LeavesContainer = ({
   monthText,
   numberOfDays,
@@ -12,6 +19,20 @@ const LeavesContainer = ({
   statusTextColor,
   arrowColor,
 }) => {
+  const [startDate, endDate] = dateRange.split(' - ');
+
+  const formattedStartDate = formatDate(startDate);
+  const formattedEndDate = formatDate(endDate);
+
+  const getAppliedByColor = leaveType => {
+    if (leaveType === 'PTO') {
+      return '#881686';
+    }
+    return '#0E88F2';
+  };
+
+  const appliedByColor = getAppliedByColor(appliedBy);
+
   return (
     <View style={styles.container}>
       <Text style={styles.monthText}>{monthText}</Text>
@@ -37,8 +58,14 @@ const LeavesContainer = ({
           </View>
         </View>
         <View style={styles.hr} />
-        <Text style={styles.dateRange}>{dateRange}</Text>
-        <Text style={styles.appliedBy}>{appliedBy}</Text>
+        <Text style={styles.dateRange}>
+          {formattedStartDate === formattedEndDate
+            ? formattedStartDate
+            : `${formattedStartDate} - ${formattedEndDate}`}
+        </Text>
+        <Text style={[styles.appliedBy, {color: appliedByColor}]}>
+          {appliedBy}
+        </Text>
         <View style={styles.arrowDiv}>
           <ArrowRight stroke={arrowColor || '#FFFFFF'} width={24} height={24} />
         </View>
@@ -99,7 +126,6 @@ const styles = StyleSheet.create({
   appliedBy: {
     fontSize: 14,
     fontWeight: 600,
-    color: '#0E88F2',
     marginTop: 5,
   },
   arrowDiv: {

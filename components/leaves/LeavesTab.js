@@ -35,15 +35,9 @@ const LeavesTab = () => {
             key={leave.id}
             monthText={leave.month}
             numberOfDays={leave.numberOfDays}
-            status={leave.status}
-            statusColor={
-              leave.status === 'Approved'
-                ? 'rgba(49, 176, 115, 0.2)'
-                : 'rgba(241, 13, 13, 0.2)'
-            }
-            statusTextColor={
-              leave.status === 'Approved' ? '#31B073' : 'rgba(255, 48, 48, 0.5)'
-            }
+            status="Approved"
+            statusColor="rgba(49, 176, 115, 0.2)"
+            statusTextColor="#31B073"
             dateRange={`${leave.startDate} - ${leave.endDate}`}
             appliedBy={leave.leaveType}
             arrowColor="#FFFFFF"
