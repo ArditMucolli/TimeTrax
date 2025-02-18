@@ -4,7 +4,7 @@ import ArrowRight from '../../assets/ArrowRight';
 
 const LeavesContainer = ({
   monthText,
-  leaveTitle,
+  numberOfDays,
   status,
   dateRange,
   appliedBy,
@@ -17,7 +17,11 @@ const LeavesContainer = ({
       <Text style={styles.monthText}>{monthText}</Text>
       <View style={styles.leaveRequestContainer}>
         <View style={styles.leaveDetailsContainer}>
-          <Text style={styles.leaveTitle}>{leaveTitle}</Text>
+          <Text style={styles.leaveTitle}>
+            {numberOfDays === 1
+              ? 'Full day application'
+              : `${numberOfDays} Days Application`}
+          </Text>
           <View
             style={[
               styles.statusContainer,

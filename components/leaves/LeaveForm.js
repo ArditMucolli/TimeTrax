@@ -93,7 +93,6 @@ const LeaveForm = ({leaveType, leaveOptions, handleSelectLeaveType}) => {
 
       Alert.alert('Success', 'Leave request submitted.');
 
-      // Reset form fields after submission
       setDescription('');
       setSelectedStartDate(null);
       setSelectedEndDate(null);

@@ -5,13 +5,10 @@ import auth from '@react-native-firebase/auth';
 const useLeaves = () => {
   const [leaves, setLeaves] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const user = auth().currentUser; // Get the current user
 
   useEffect(() => {
-    const user = auth().currentUser;
     if (!user) {
-      setError('User not authenticated.');
-      setLoading(false);
       return;
     }
 
@@ -30,15 +27,14 @@ const useLeaves = () => {
         },
         error => {
           console.error('Error fetching leaves:', error);
-          setError(error.message);
           setLoading(false);
         },
       );
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
-  return {leaves, loading, error};
+  return {leaves, loading};
 };
 
 export default useLeaves;

@@ -21,8 +21,11 @@ const CalendarModal = ({modalVisible, onClose, onSelectDateRange}) => {
       setEndDate(null);
     } else if (!startDate) {
       setStartDate(day.dateString);
+      setEndDate(null);
     } else {
-      if (new Date(day.dateString) >= new Date(startDate)) {
+      const selectedStartDate = new Date(startDate);
+      const selectedEndDate = new Date(day.dateString);
+      if (selectedEndDate >= selectedStartDate) {
         setEndDate(day.dateString);
       } else {
         setStartDate(day.dateString);
