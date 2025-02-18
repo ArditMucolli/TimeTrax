@@ -19,9 +19,7 @@ const NewLeaveScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{padding: 10}}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <ArrowLeft width={24} height={24} />
         </TouchableOpacity>
         <Text style={styles.title}>New Leave</Text>
@@ -47,7 +45,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    padding: 10,
+    padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
   },
