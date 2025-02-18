@@ -28,7 +28,6 @@ const CheckModal = ({visible, onClose}) => {
   const navigation = useNavigation();
 
   const startTimer = useCallback(() => {
-    // Only start the timer if it's not already started and no existing check-in document
     if (!checkInDocId) {
       setTimerStarted(true);
       const startTime = Date.now() - elapsedTime * 1000;
@@ -46,6 +45,7 @@ const CheckModal = ({visible, onClose}) => {
           breakStartTime: null, // Initially, no break
           breakEndTime: null, // Initially, no break
           totalBreakDuration: 0, // No break duration initially
+          status: 'active', // Set status to 'active'
         };
 
         firestore()
@@ -82,19 +82,22 @@ const CheckModal = ({visible, onClose}) => {
       firestore()
         .collection('checkIns')
         .doc(checkInDocId)
-        .update({breakStartTime: breakStart})
+        .update({
+          breakStartTime: breakStart,
+          status: 'on break', // Set status to 'on break'
+        })
         .then(() => {
-          console.log('Break start time updated in Firestore');
+          console.log('Break start time and status updated in Firestore');
         })
         .catch(error => {
-          console.error('Error updating break start time:', error);
+          console.error('Error updating break start time and status:', error);
         });
     }
   }, [stopTimer, checkInDocId]);
 
   const continueTimer = useCallback(() => {
     setIsOnBreak(false);
-    const breakEndTime = new Date().toISOString(); // Track break end time here only locally, no state needed
+    const breakEndTime = new Date().toISOString();
     startTimer();
 
     const user = getAuth().currentUser;
@@ -109,12 +112,13 @@ const CheckModal = ({visible, onClose}) => {
         .update({
           breakEndTime: breakEndTime,
           totalBreakDuration: firestore.FieldValue.increment(breakDuration), // Add break duration
+          status: 'active', // Update status to 'active' when continuing work
         })
         .then(() => {
-          console.log('Break end time and duration updated in Firestore');
+          console.log('Break end time and status updated in Firestore');
         })
         .catch(error => {
-          console.error('Error updating break end time:', error);
+          console.error('Error updating break end time and status:', error);
         });
     }
   }, [startTimer, breakStartTime, checkInDocId]);
@@ -137,9 +141,13 @@ const CheckModal = ({visible, onClose}) => {
         await firestore().collection('checkIns').doc(checkInDocId).update({
           endTime,
           totalDuration,
+          status: 'checked out', // Set status to 'checked out'
         });
 
-        console.log('Check-out data saved:', {endTime, totalDuration});
+        console.log('Check-out data and status saved:', {
+          endTime,
+          totalDuration,
+        });
       } catch (error) {
         console.error('Error updating check-out data:', error);
         Alert.alert('Failed to save check-out data');
