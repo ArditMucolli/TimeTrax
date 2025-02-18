@@ -23,13 +23,14 @@ const Header = ({Title}) => {
         <Text style={styles.title}>{Title}</Text>
         <View style={styles.rightIcons}>
           <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Timer fill="#E33030" stroke="#E33030" />
+            <Timer fill={'#041F4E'} stroke={'#041F4E'} />
           </TouchableOpacity>
           <TouchableOpacity>
             <Bell />
           </TouchableOpacity>
         </View>
       </View>
+
       <CheckModal
         visible={isModalVisible}
         onClose={() => setModalVisible(false)}
@@ -37,8 +38,6 @@ const Header = ({Title}) => {
     </SafeAreaView>
   );
 };
-
-export default Header;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -66,4 +65,9 @@ const styles = StyleSheet.create({
     gap: 10,
     width: 50,
   },
+  loadingIndicator: {
+    marginTop: 20,
+  },
 });
+
+export default Header;

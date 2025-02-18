@@ -1,13 +1,42 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
-const Timer = ({elapsedTime, isOnBreak}) => (
-  <View style={[styles.timerWidget, isOnBreak && styles.onBreakTimerWidget]}>
-    <Text style={[styles.timerText, isOnBreak && styles.onBreakTimerText]}>
-      {new Date(elapsedTime * 1000).toISOString().substr(11, 5)}h
-    </Text>
-  </View>
-);
+const Timer = ({elapsedTime, isOnBreak}) => {
+  const [time, setTime] = useState(elapsedTime);
+
+  useEffect(() => {
+    let intervalId;
+
+    if (!isOnBreak) {
+      intervalId = setInterval(() => {
+        setTime(prevTime => prevTime + 1);
+      }, 1000);
+    } else {
+      clearInterval(intervalId);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [isOnBreak]);
+
+  const formatTime = timeInSeconds => {
+    const hours = Math.floor(timeInSeconds / 3600);
+    const minutes = Math.floor((timeInSeconds % 3600) / 60);
+    const seconds = timeInSeconds % 60;
+    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}:${
+      seconds < 10 ? '0' : ''
+    }${seconds}`;
+  };
+
+  return (
+    <View style={[styles.timerWidget, isOnBreak && styles.onBreakTimerWidget]}>
+      <Text style={[styles.timerText, isOnBreak && styles.onBreakTimerText]}>
+        {formatTime(time)}
+      </Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   timerWidget: {

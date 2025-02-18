@@ -42,10 +42,10 @@ const CheckModal = ({visible, onClose}) => {
           userId: user.uid,
           startTime: new Date(Date.now() - elapsedTime * 1000).toISOString(),
           timestamp: new Date().toISOString(),
-          breakStartTime: null, // Initially, no break
-          breakEndTime: null, // Initially, no break
-          totalBreakDuration: 0, // No break duration initially
-          status: 'active', // Set status to 'active'
+          breakStartTime: null,
+          breakEndTime: null,
+          totalBreakDuration: 0,
+          status: 'active',
         };
 
         firestore()
@@ -64,17 +64,16 @@ const CheckModal = ({visible, onClose}) => {
     }
   }, [elapsedTime, checkInDocId]);
 
-  const stopTimer = useCallback(() => {
-    clearInterval(intervalId);
-    setTimerStarted(false);
-  }, [intervalId]);
-
   const startBreak = useCallback(() => {
     setIsOnBreak(true);
     const breakStart = new Date().toISOString();
-    setBreakStartTime(breakStart); // Ensure break start time is set
+    setBreakStartTime(breakStart);
 
-    stopTimer(); // Stop the timer immediately
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+    setTimerStarted(false);
 
     const user = getAuth().currentUser;
     if (user && checkInDocId) {
@@ -83,14 +82,24 @@ const CheckModal = ({visible, onClose}) => {
         .doc(checkInDocId)
         .update({
           breakStartTime: breakStart,
-          status: 'on break', // Set status to 'on break'
+          status: 'on break',
         })
-        .then(() => {})
+        .then(() => {
+          console.log('Break started');
+        })
         .catch(error => {
-          console.error('Error updating break start time and status:', error);
+          console.error('Error updating break start time:', error);
         });
     }
-  }, [stopTimer, checkInDocId]);
+  }, [intervalId, checkInDocId]);
+
+  const stopTimer = useCallback(() => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+    setTimerStarted(false);
+  }, [intervalId]);
 
   const continueTimer = useCallback(() => {
     setIsOnBreak(false);
@@ -99,20 +108,20 @@ const CheckModal = ({visible, onClose}) => {
 
     const user = getAuth().currentUser;
     if (user && checkInDocId && breakStartTime) {
-      // Calculate the break duration
       const breakDuration = Math.floor(
-        (new Date() - new Date(breakStartTime)) / 1000,
+        (new Date(breakEndTime) - new Date(breakStartTime)) / 1000,
       );
+
       firestore()
         .collection('checkIns')
         .doc(checkInDocId)
         .update({
           breakEndTime: breakEndTime,
-          totalBreakDuration: firestore.FieldValue.increment(breakDuration), // Add break duration
-          status: 'active', // Update status to 'active' when continuing work
+          totalBreakDuration: firestore.FieldValue.increment(breakDuration),
+          status: 'active',
         })
         .then(() => {
-          console.log('Break end time and status updated in Firestore');
+          console.log('Break end time and status updated');
         })
         .catch(error => {
           console.error('Error updating break end time and status:', error);
@@ -129,34 +138,31 @@ const CheckModal = ({visible, onClose}) => {
     setIsOnBreak(false);
 
     const user = getAuth().currentUser;
-
     if (user && checkInDocId) {
       const endTime = new Date().toISOString();
       const totalDuration = elapsedTime;
 
-      try {
-        await firestore().collection('checkIns').doc(checkInDocId).update({
-          endTime,
-          totalDuration,
-          status: 'checked out', // Set status to 'checked out'
-        });
+      const totalBreakDuration = 0;
 
-        console.log('Check-out data and status saved:', {
-          endTime,
-          totalDuration,
-        });
+      try {
+        await firestore()
+          .collection('checkIns')
+          .doc(checkInDocId)
+          .update({
+            endTime,
+            totalDuration: totalDuration + totalBreakDuration,
+            status: 'checked out',
+          });
+
+        setElapsedTime(0);
+        setShowCheckOutConfirmation(false);
+        onClose();
+
+        navigation.replace('Homepage');
       } catch (error) {
         console.error('Error updating check-out data:', error);
         Alert.alert('Failed to save check-out data');
       }
-
-      setElapsedTime(0);
-      setShowCheckOutConfirmation(false);
-      onClose();
-
-      navigation.replace('Homepage');
-    } else {
-      console.error('No user is logged in or check-in document not found');
     }
   }, [stopTimer, elapsedTime, onClose, checkInDocId, navigation]);
 
