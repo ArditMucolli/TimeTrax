@@ -26,8 +26,6 @@ const RecentActivity = ({userId}) => {
     <View style={styles.container}>
       <Text style={styles.text}>Recent Activity</Text>
       {checkIns.map((checkIn, index) => {
-        console.log('CheckIn Object:', checkIn);
-
         const isCheckIn = checkIn.status === 'Check In';
         const timestamp = isCheckIn ? checkIn.startTime : checkIn.endTime;
 

@@ -53,7 +53,6 @@ const CheckModal = ({visible, onClose}) => {
           .add(checkInData)
           .then(docRef => {
             setCheckInDocId(docRef.id);
-            console.log('Check-in data saved:', checkInData);
           })
           .catch(error => {
             console.error('Error saving check-in data:', error);
@@ -86,9 +85,7 @@ const CheckModal = ({visible, onClose}) => {
           breakStartTime: breakStart,
           status: 'on break', // Set status to 'on break'
         })
-        .then(() => {
-          console.log('Break start time and status updated in Firestore');
-        })
+        .then(() => {})
         .catch(error => {
           console.error('Error updating break start time and status:', error);
         });
