@@ -2,7 +2,6 @@ import React from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 import ArrowRight from '../../assets/ArrowRight';
 
-// Helper function to format dates
 const formatDate = dateString => {
   const date = new Date(dateString);
   const options = {weekday: 'short', day: 'numeric', month: 'short'};
