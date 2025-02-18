@@ -5,7 +5,7 @@ import auth from '@react-native-firebase/auth';
 const useLeaves = () => {
   const [leaves, setLeaves] = useState([]);
   const [loading, setLoading] = useState(true);
-  const user = auth().currentUser; // Get the current user
+  const user = auth().currentUser;
 
   useEffect(() => {
     if (!user) {

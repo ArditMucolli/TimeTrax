@@ -46,7 +46,6 @@ const useCheckIns = userId => {
           },
         );
 
-      // Cleanup on component unmount
       return () => unsubscribe();
     } else {
       setLoading(false);
