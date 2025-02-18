@@ -1,15 +1,14 @@
 import React from 'react';
 import {ScrollView, View, StyleSheet, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native'; // Import useNavigation
+import {useNavigation} from '@react-navigation/native';
 import LeavesContainer from './LeavesContainer';
 import Filter from '../../assets/Filter';
 
 const LeavesTab = () => {
-  const navigation = useNavigation(); // Initialize navigation
+  const navigation = useNavigation();
 
-  // Function to handle navigation when the filter icon is clicked
   const handleFilterPress = () => {
-    navigation.navigate('Filter'); // Navigate to Filter screen
+    navigation.navigate('Filter');
   };
 
   return (
