@@ -41,7 +41,7 @@ const HomepageWidget = ({userId}) => {
     return <Text>Error: {error.message}</Text>;
   }
   if (lastActivities.length === 0) {
-    return <Text>No recent activities available.</Text>;
+    return null;
   }
 
   return (
