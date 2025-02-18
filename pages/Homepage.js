@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import Header from '../components/Header';
 import HomepageWidget from '../components/HomepageWidget';
 import RecentActivity from '../components/RecentActivity';
-import auth from '@react-native-firebase/auth'; // Import Firebase auth
+import auth from '@react-native-firebase/auth';
 
 const Homepage = ({justLoggedIn, setJustLoggedIn}) => {
   const [showMessage, setShowMessage] = useState(false);

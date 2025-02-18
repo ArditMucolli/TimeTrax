@@ -65,7 +65,6 @@ const LoginScreen = ({navigation}) => {
       <View style={styles.logoContainer}>
         <TimeTrax />
       </View>
-
       <View style={styles.formContainer}>
         <Text style={styles.label}>Email</Text>
         <View style={styles.inputWrapper}>
@@ -82,7 +81,6 @@ const LoginScreen = ({navigation}) => {
             placeholderTextColor="#979797"
           />
         </View>
-
         <Text style={styles.label}>Password</Text>
         <View style={styles.inputWrapper}>
           <View style={styles.inputIcon}>
