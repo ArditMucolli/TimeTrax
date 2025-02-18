@@ -18,7 +18,6 @@ const NewLeaveScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header Section */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}

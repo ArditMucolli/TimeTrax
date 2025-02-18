@@ -5,7 +5,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 import ArrowDown from '../../assets/ArrowDown';
 import CalendarIcon from '../../assets/footer/CalendarIcon';
 import LeaveTypeModal from './LeaveTypeModal';
@@ -16,6 +19,7 @@ const LeaveForm = ({leaveType, leaveOptions, handleSelectLeaveType}) => {
   const [description, setDescription] = useState('');
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     isVisible: isLeaveTypeModalVisible,
@@ -35,33 +39,71 @@ const LeaveForm = ({leaveType, leaveOptions, handleSelectLeaveType}) => {
   };
 
   const calculateNumberOfDays = (startDate, endDate) => {
-    if (!startDate || !endDate) return 0;
-
+    if (!startDate || !endDate) {
+      return 0;
+    }
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const timeDiff = end.getTime() - start.getTime();
-    const dayDiff = timeDiff / (1000 * 3600 * 24);
-    return dayDiff + 1;
+    return Math.ceil((end - start) / (1000 * 3600 * 24)) + 1;
   };
 
   const formatDate = date => {
-    if (!date) return '';
+    if (!date) {
+      return '';
+    }
     const d = new Date(date);
-    const day = d.getDate().toString().padStart(2, '0');
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}/${d.getFullYear()}`;
   };
 
   const numberOfDays = calculateNumberOfDays(
     selectedStartDate,
     selectedEndDate,
   );
-
   const formattedDateRange =
     selectedStartDate && selectedEndDate
       ? `${formatDate(selectedStartDate)} - ${formatDate(selectedEndDate)}`
       : 'Select a date range';
+
+  const handleSubmit = async () => {
+    const user = auth().currentUser;
+
+    if (!user) {
+      Alert.alert('Error', 'User not authenticated.');
+      return;
+    }
+
+    if (!selectedStartDate || !selectedEndDate || !description) {
+      Alert.alert('Missing Fields', 'Please fill in all the fields.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await firestore().collection('leaves').add({
+        userId: user.uid,
+        leaveType,
+        description,
+        startDate: selectedStartDate,
+        endDate: selectedEndDate,
+        numberOfDays,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+      });
+
+      Alert.alert('Success', 'Leave request submitted.');
+
+      // Reset form fields after submission
+      setDescription('');
+      setSelectedStartDate(null);
+      setSelectedEndDate(null);
+    } catch (error) {
+      console.error('Error saving leave:', error);
+      Alert.alert('Error', 'Could not save leave request.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -81,7 +123,7 @@ const LeaveForm = ({leaveType, leaveOptions, handleSelectLeaveType}) => {
           placeholder="Enter description"
           value={description}
           onChangeText={setDescription}
-          multiline={true}
+          multiline
         />
       </View>
       <View style={styles.section}>
@@ -100,9 +142,14 @@ const LeaveForm = ({leaveType, leaveOptions, handleSelectLeaveType}) => {
         onSelectDateRange={handleDateRangeSelect}
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSubmit}
+        disabled={loading}>
         <Text style={styles.buttonText}>
-          {numberOfDays > 0
+          {loading
+            ? 'Submitting...'
+            : numberOfDays > 0
             ? `Apply for ${numberOfDays} day${numberOfDays > 1 ? 's' : ''}`
             : 'Apply for Leave'}
         </Text>
