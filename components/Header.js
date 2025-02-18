@@ -23,7 +23,7 @@ const Header = ({Title}) => {
         <Text style={styles.title}>{Title}</Text>
         <View style={styles.rightIcons}>
           <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Timer />
+            <Timer fill="#E33030" stroke="#E33030" />
           </TouchableOpacity>
           <TouchableOpacity>
             <Bell />
