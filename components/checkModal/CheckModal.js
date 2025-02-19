@@ -15,6 +15,7 @@ import X from '../../assets/X';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import {getAuth} from '@react-native-firebase/auth';
+import RNPickerSelect from 'react-native-picker-select';
 
 const CheckModal = ({visible, onClose}) => {
   const [timerStarted, setTimerStarted] = useState(false);
@@ -26,6 +27,7 @@ const CheckModal = ({visible, onClose}) => {
   const [checkInDocId, setCheckInDocId] = useState(null);
   const [breakStartTime, setBreakStartTime] = useState(null);
   const navigation = useNavigation();
+  const [breakReason, setBreakReason] = useState(null);
 
   const startTimer = useCallback(() => {
     if (!checkInDocId) {
@@ -42,9 +44,6 @@ const CheckModal = ({visible, onClose}) => {
           userId: user.uid,
           startTime: new Date(Date.now() - elapsedTime * 1000).toISOString(),
           timestamp: new Date().toISOString(),
-          breakStartTime: null,
-          breakEndTime: null,
-          totalBreakDuration: 0,
           status: 'active',
         };
 
@@ -65,6 +64,11 @@ const CheckModal = ({visible, onClose}) => {
   }, [elapsedTime, checkInDocId]);
 
   const startBreak = useCallback(() => {
+    if (!breakReason) {
+      Alert.alert('Please select a reason for the break.');
+      return;
+    }
+
     setIsOnBreak(true);
     const breakStart = new Date().toISOString();
     setBreakStartTime(breakStart);
@@ -81,17 +85,21 @@ const CheckModal = ({visible, onClose}) => {
         .collection('checkIns')
         .doc(checkInDocId)
         .update({
-          breakStartTime: breakStart,
+          breaks: firestore.FieldValue.arrayUnion({
+            breakReason: breakReason,
+            breakStartTime: breakStart,
+            breakDuration: 0,
+          }),
           status: 'on break',
         })
         .then(() => {
           console.log('Break started');
         })
         .catch(error => {
-          console.error('Error updating break start time:', error);
+          console.error('Error starting break:', error);
         });
     }
-  }, [intervalId, checkInDocId]);
+  }, [intervalId, checkInDocId, breakReason]);
 
   const stopTimer = useCallback(() => {
     if (intervalId) {
@@ -115,16 +123,41 @@ const CheckModal = ({visible, onClose}) => {
       firestore()
         .collection('checkIns')
         .doc(checkInDocId)
-        .update({
-          breakEndTime: breakEndTime,
-          totalBreakDuration: firestore.FieldValue.increment(breakDuration),
-          status: 'active',
-        })
-        .then(() => {
-          console.log('Break end time and status updated');
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            const checkInData = doc.data();
+            const breaks = checkInData.breaks || [];
+
+            const existingBreakIndex = breaks.findIndex(
+              breakObj => breakObj.breakStartTime === breakStartTime,
+            );
+
+            if (existingBreakIndex !== -1) {
+              breaks[existingBreakIndex] = {
+                ...breaks[existingBreakIndex],
+                breakEndTime: breakEndTime,
+                breakDuration: breakDuration,
+              };
+
+              firestore()
+                .collection('checkIns')
+                .doc(checkInDocId)
+                .update({
+                  breaks: breaks,
+                  status: 'active',
+                })
+                .then(() => {
+                  console.log('Break updated successfully');
+                })
+                .catch(error => {
+                  console.error('Error updating break:', error);
+                });
+            }
+          }
         })
         .catch(error => {
-          console.error('Error updating break end time and status:', error);
+          console.error('Error fetching check-in data:', error);
         });
     }
   }, [startTimer, breakStartTime, checkInDocId]);
@@ -261,6 +294,28 @@ const CheckModal = ({visible, onClose}) => {
                 isOnBreak={isOnBreak}
               />
             )}
+            {timerStarted && !isOnBreak && !showCheckOutConfirmation && (
+              <View style={styles.reasonStyle}>
+                <Text style={styles.reasonTitle}>Select Reason *</Text>
+                <Text style={styles.reasonText}>
+                  Please select one reason to pause your work
+                </Text>
+                <View style={styles.dropdownContainer}>
+                  <RNPickerSelect
+                    onValueChange={value => setBreakReason(value)}
+                    items={[
+                      {label: 'Smoke Break', value: 'smoke_break'},
+                      {label: 'Emergency', value: 'emergency'},
+                      {label: 'Lunch Break', value: 'lunch_break'},
+                    ]}
+                    style={{
+                      inputIOS: styles.dropdown,
+                      inputAndroid: styles.dropdown,
+                    }}
+                  />
+                </View>
+              </View>
+            )}
           </View>
         </View>
       </View>
@@ -312,6 +367,38 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  reasonStyle: {
+    marginTop: 20,
+  },
+  reasonTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#252525',
+  },
+  reasonText: {
+    marginTop: 5,
+    marginBottom: 10,
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#252525',
+  },
+  dropdownContainer: {
+    marginTop: 10,
+    height: 45,
+    width: 330,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingLeft: 10,
+    justifyContent: 'center',
+  },
+  dropdown: {
+    height: 50,
+    fontSize: 16,
+    color: '#252525',
+    textAlign: 'center',
+    paddingTop: 10,
   },
 });
 
