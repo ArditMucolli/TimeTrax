@@ -26,6 +26,7 @@ const CheckModal = ({visible, onClose}) => {
     useState(false);
   const [checkInDocId, setCheckInDocId] = useState(null);
   const [breakStartTime, setBreakStartTime] = useState(null);
+  const [breakDuration, setBreakDuration] = useState(0); // Track break duration
   const navigation = useNavigation();
   const [breakReason, setBreakReason] = useState(null);
 
@@ -78,6 +79,14 @@ const CheckModal = ({visible, onClose}) => {
       setIntervalId(null);
     }
     setTimerStarted(false);
+    setElapsedTime(0); // Reset elapsedTime when the break starts
+
+    // Start tracking break duration
+    const breakIntervalId = setInterval(() => {
+      setBreakDuration(prevDuration => prevDuration + 1);
+    }, 1000);
+
+    setIntervalId(breakIntervalId);
 
     const user = getAuth().currentUser;
     if (user && checkInDocId) {
@@ -174,8 +183,7 @@ const CheckModal = ({visible, onClose}) => {
     if (user && checkInDocId) {
       const endTime = new Date().toISOString();
       const totalDuration = elapsedTime;
-
-      const totalBreakDuration = 0;
+      const totalBreakDuration = breakDuration;
 
       try {
         await firestore()
@@ -197,7 +205,14 @@ const CheckModal = ({visible, onClose}) => {
         Alert.alert('Failed to save check-out data');
       }
     }
-  }, [stopTimer, elapsedTime, onClose, checkInDocId, navigation]);
+  }, [
+    stopTimer,
+    elapsedTime,
+    onClose,
+    checkInDocId,
+    breakDuration,
+    navigation,
+  ]);
 
   const cancelCheckOut = useCallback(() => {
     setShowCheckOutConfirmation(false);
@@ -287,12 +302,7 @@ const CheckModal = ({visible, onClose}) => {
             )}
 
             {isOnBreak && !showCheckOutConfirmation && (
-              <ActionButtons
-                onStartBreak={startBreak}
-                onContinue={continueTimer}
-                onCheckOut={handleCheckOut}
-                isOnBreak={isOnBreak}
-              />
+              <ActionButtons onContinue={continueTimer} isOnBreak={isOnBreak} />
             )}
             {timerStarted && !isOnBreak && !showCheckOutConfirmation && (
               <View style={styles.reasonStyle}>
