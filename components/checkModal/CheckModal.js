@@ -302,7 +302,11 @@ const CheckModal = ({visible, onClose}) => {
             )}
 
             {isOnBreak && !showCheckOutConfirmation && (
-              <ActionButtons onContinue={continueTimer} isOnBreak={isOnBreak} />
+              <ActionButtons
+                onContinue={continueTimer}
+                isOnBreak={isOnBreak}
+                onCheckOut={handleCheckOut}
+              />
             )}
             {timerStarted && !isOnBreak && !showCheckOutConfirmation && (
               <View style={styles.reasonStyle}>
