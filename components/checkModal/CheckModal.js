@@ -65,6 +65,10 @@ const CheckModal = ({visible, onClose}) => {
   }, [elapsedTime, checkInDocId]);
 
   const startBreak = useCallback(() => {
+    if (!breakReason) {
+      Alert.alert('Error', 'Please select a reason before starting a break.');
+      return;
+    }
     setIsOnBreak(true);
     const breakStart = new Date().toISOString();
     setBreakStartTime(breakStart);
