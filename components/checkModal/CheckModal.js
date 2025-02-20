@@ -218,32 +218,54 @@ const CheckModal = ({visible, onClose}) => {
   }, []);
 
   useEffect(() => {
-    if (visible) {
+    let intervalId;
+
+    const fetchCheckInStatus = async () => {
       const user = getAuth().currentUser;
-      if (user) {
-        firestore()
-          .collection('checkIns')
-          .where('userId', '==', user.uid)
-          .orderBy('timestamp', 'desc')
-          .limit(1)
-          .get()
-          .then(querySnapshot => {
-            if (!querySnapshot.empty) {
-              const doc = querySnapshot.docs[0];
-              const data = doc.data();
-              setCheckInDocId(doc.id);
-              setElapsedTime(data.elapsedTime || 0);
-              setIsOnBreak(data.isOnBreak || false);
-              setBreakStartTime(data.breakStartTime || null);
-              setBreakDuration(data.breakDuration || 0);
-            }
-          })
-          .catch(error => {
-            console.error('Error fetching check-in data:', error);
-          });
+      if (!user) {
+        return;
       }
+
+      const snapshot = await firestore()
+        .collection('checkIns')
+        .where('userId', '==', user.uid)
+        .orderBy('timestamp', 'desc')
+        .limit(1)
+        .get();
+
+      if (!snapshot.empty) {
+        const doc = snapshot.docs[0];
+        const data = doc.data();
+        setCheckInDocId(doc.id);
+        setElapsedTime(data.elapsedTime || 0);
+        setIsOnBreak(data.isOnBreak || false);
+        setBreakStartTime(data.breakStartTime || null);
+        setBreakDuration(data.breakDuration || 0);
+
+        if (!data.endTime) {
+          const startTime = new Date(data.startTime).getTime();
+          const elapsed = Math.floor((Date.now() - startTime) / 1000);
+
+          setElapsedTime(elapsed);
+          setTimerStarted(true);
+
+          intervalId = setInterval(() => {
+            setElapsedTime(prev => prev + 1);
+          }, 1000);
+        }
+      }
+    };
+
+    if (visible) {
+      fetchCheckInStatus();
     }
-  }, [visible]);
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [intervalId, visible]);
 
   return (
     <Modal
