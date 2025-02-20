@@ -217,8 +217,6 @@ const CheckModal = ({visible, onClose}) => {
   }, []);
 
   useEffect(() => {
-    let intervalId;
-
     const fetchCheckInStatus = async () => {
       const user = getAuth().currentUser;
       if (!user) {
@@ -228,37 +226,30 @@ const CheckModal = ({visible, onClose}) => {
       const snapshot = await firestore()
         .collection('checkIns')
         .where('userId', '==', user.uid)
-        .orderBy('timestamp', 'desc')
+        .orderBy('startTime', 'desc')
         .limit(1)
         .get();
 
       if (!snapshot.empty) {
-        const doc = snapshot.docs[0];
-        const data = doc.data();
-        setCheckInDocId(doc.id);
-        setElapsedTime(data.elapsedTime || 0);
-        setIsOnBreak(data.isOnBreak || false);
-        setBreakStartTime(data.breakStartTime || null);
-        setBreakDuration(data.breakDuration || 0);
+        const lastCheckIn = snapshot.docs[0].data();
 
-        if (!data.endTime) {
-          const startTime = new Date(data.startTime).getTime();
+        if (!lastCheckIn.endTime) {
+          const startTime = new Date(lastCheckIn.startTime).getTime();
           const elapsed = Math.floor((Date.now() - startTime) / 1000);
 
           setElapsedTime(elapsed);
           setTimerStarted(true);
+          setCheckInDocId(snapshot.docs[0].id);
 
-          intervalId = setInterval(() => {
+          const id = setInterval(() => {
             setElapsedTime(prev => prev + 1);
           }, 1000);
+          setIntervalId(id);
         }
       }
     };
 
-    if (visible) {
-      fetchCheckInStatus();
-    }
-
+    fetchCheckInStatus();
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
