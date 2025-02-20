@@ -105,7 +105,6 @@ const CheckModal = ({visible, onClose}) => {
     setIntervalId(null);
     setTimerStarted(false);
 
-    // Save the elapsed time to Firestore if the user stops the timer
     if (checkInDocId) {
       firestore()
         .collection('checkIns')
