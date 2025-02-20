@@ -73,7 +73,6 @@ const CheckModal = ({visible, onClose}) => {
     const breakStart = new Date().toISOString();
     setBreakStartTime(breakStart);
 
-    // Save break start time and reason in Firestore
     const user = getAuth().currentUser;
     if (user && checkInDocId) {
       firestore()
@@ -81,9 +80,9 @@ const CheckModal = ({visible, onClose}) => {
         .doc(checkInDocId)
         .update({
           breaks: firestore.FieldValue.arrayUnion({
-            breakReason: breakReason, // this will store the selected reason
+            breakReason: breakReason,
             breakStartTime: breakStart,
-            breakDuration: 0, // You can later update the break duration when the break ends
+            breakDuration: 0,
           }),
           isOnBreak: true,
           status: 'on break',
