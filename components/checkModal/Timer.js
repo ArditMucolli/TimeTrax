@@ -23,7 +23,10 @@ const Timer = ({elapsedTime, isOnBreak}) => {
   const formatTime = timeInSeconds => {
     const hours = Math.floor(timeInSeconds / 3600);
     const minutes = Math.floor((timeInSeconds % 3600) / 60);
-    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}h`;
+    const seconds = timeInSeconds % 60;
+    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}:${
+      seconds < 10 ? '0' : ''
+    }${seconds}`;
   };
 
   return (
