@@ -26,7 +26,7 @@ const CheckModal = ({visible, onClose}) => {
     useState(false);
   const [checkInDocId, setCheckInDocId] = useState(null);
   const [breakStartTime, setBreakStartTime] = useState(null);
-  const [breakDuration, setBreakDuration] = useState(0); // Track break duration
+  const [breakDuration, setBreakDuration] = useState(0);
   const navigation = useNavigation();
   const [breakReason, setBreakReason] = useState(null);
 
@@ -65,29 +65,11 @@ const CheckModal = ({visible, onClose}) => {
   }, [elapsedTime, checkInDocId]);
 
   const startBreak = useCallback(() => {
-    if (!breakReason) {
-      Alert.alert('Please select a reason for the break.');
-      return;
-    }
-
     setIsOnBreak(true);
     const breakStart = new Date().toISOString();
     setBreakStartTime(breakStart);
 
-    if (intervalId) {
-      clearInterval(intervalId);
-      setIntervalId(null);
-    }
-    setTimerStarted(false);
-    setElapsedTime(0); // Reset elapsedTime when the break starts
-
-    // Start tracking break duration
-    const breakIntervalId = setInterval(() => {
-      setBreakDuration(prevDuration => prevDuration + 1);
-    }, 1000);
-
-    setIntervalId(breakIntervalId);
-
+    // Save break start time and reason in Firestore
     const user = getAuth().currentUser;
     if (user && checkInDocId) {
       firestore()
@@ -95,40 +77,55 @@ const CheckModal = ({visible, onClose}) => {
         .doc(checkInDocId)
         .update({
           breaks: firestore.FieldValue.arrayUnion({
-            breakReason: breakReason,
+            breakReason: breakReason, // this will store the selected reason
             breakStartTime: breakStart,
-            breakDuration: 0,
+            breakDuration: 0, // You can later update the break duration when the break ends
           }),
+          isOnBreak: true,
           status: 'on break',
         })
         .then(() => {
-          console.log('Break started');
+          clearInterval(intervalId);
+          setIntervalId(null);
+          setTimerStarted(false);
         })
         .catch(error => {
-          console.error('Error starting break:', error);
+          console.error('Error updating break data:', error);
         });
+    } else {
+      console.error('No user or check-in document ID found');
     }
-  }, [intervalId, checkInDocId, breakReason]);
+  }, [checkInDocId, intervalId, breakReason]);
 
   const stopTimer = useCallback(() => {
-    if (intervalId) {
-      clearInterval(intervalId);
-      setIntervalId(null);
-    }
+    clearInterval(intervalId);
+    setIntervalId(null);
     setTimerStarted(false);
-  }, [intervalId]);
+
+    // Save the elapsed time to Firestore if the user stops the timer
+    if (checkInDocId) {
+      firestore()
+        .collection('checkIns')
+        .doc(checkInDocId)
+        .update({
+          elapsedTime: elapsedTime,
+        })
+        .catch(error => {
+          console.error('Error saving elapsed time:', error);
+        });
+    }
+  }, [elapsedTime, intervalId, checkInDocId]);
 
   const continueTimer = useCallback(() => {
     setIsOnBreak(false);
-    const breakEndTime = new Date().toISOString();
-    startTimer();
+    setTimerStarted(true);
+    const resumeStart = Date.now() - (elapsedTime + breakDuration) * 1000;
+    const id = setInterval(() => {
+      setElapsedTime(Math.floor((Date.now() - resumeStart) / 1000));
+    }, 1000);
+    setIntervalId(id);
 
-    const user = getAuth().currentUser;
-    if (user && checkInDocId && breakStartTime) {
-      const breakDuration = Math.floor(
-        (new Date(breakEndTime) - new Date(breakStartTime)) / 1000,
-      );
-
+    if (checkInDocId) {
       firestore()
         .collection('checkIns')
         .doc(checkInDocId)
@@ -145,7 +142,6 @@ const CheckModal = ({visible, onClose}) => {
             if (existingBreakIndex !== -1) {
               breaks[existingBreakIndex] = {
                 ...breaks[existingBreakIndex],
-                breakEndTime: breakEndTime,
                 breakDuration: breakDuration,
               };
 
@@ -166,10 +162,10 @@ const CheckModal = ({visible, onClose}) => {
           }
         })
         .catch(error => {
-          console.error('Error fetching check-in data:', error);
+          console.error('Error updating break duration:', error);
         });
     }
-  }, [startTimer, breakStartTime, checkInDocId]);
+  }, [elapsedTime, breakDuration, checkInDocId, breakStartTime]);
 
   const handleCheckOut = useCallback(() => {
     setShowCheckOutConfirmation(true);
@@ -219,46 +215,32 @@ const CheckModal = ({visible, onClose}) => {
   }, []);
 
   useEffect(() => {
-    const fetchCheckInStatus = async () => {
+    if (visible) {
       const user = getAuth().currentUser;
-      if (!user) {
-        return;
+      if (user) {
+        firestore()
+          .collection('checkIns')
+          .where('userId', '==', user.uid)
+          .orderBy('timestamp', 'desc')
+          .limit(1)
+          .get()
+          .then(querySnapshot => {
+            if (!querySnapshot.empty) {
+              const doc = querySnapshot.docs[0];
+              const data = doc.data();
+              setCheckInDocId(doc.id);
+              setElapsedTime(data.elapsedTime || 0);
+              setIsOnBreak(data.isOnBreak || false);
+              setBreakStartTime(data.breakStartTime || null);
+              setBreakDuration(data.breakDuration || 0);
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching check-in data:', error);
+          });
       }
-
-      const snapshot = await firestore()
-        .collection('checkIns')
-        .where('userId', '==', user.uid)
-        .orderBy('startTime', 'desc')
-        .limit(1)
-        .get();
-
-      if (!snapshot.empty) {
-        const lastCheckIn = snapshot.docs[0].data();
-
-        if (!lastCheckIn.endTime) {
-          const startTime = new Date(lastCheckIn.startTime).getTime();
-          const elapsed = Math.floor((Date.now() - startTime) / 1000);
-
-          setElapsedTime(elapsed);
-          setTimerStarted(true);
-          setCheckInDocId(snapshot.docs[0].id);
-
-          const id = setInterval(() => {
-            setElapsedTime(prev => prev + 1);
-          }, 1000);
-          setIntervalId(id);
-        }
-      }
-    };
-
-    fetchCheckInStatus();
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [intervalId, visible]);
+    }
+  }, [visible]);
 
   return (
     <Modal
