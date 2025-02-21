@@ -82,7 +82,7 @@ const CheckModal = ({visible, onClose}) => {
           breaks: firestore.FieldValue.arrayUnion({
             breakReason: breakReason,
             breakStartTime: breakStart,
-            breakDuration: 0,
+            breakEndTime: null,
           }),
           isOnBreak: true,
           status: 'on break',
@@ -91,6 +91,8 @@ const CheckModal = ({visible, onClose}) => {
           clearInterval(intervalId);
           setIntervalId(null);
           setTimerStarted(false);
+          // Set break duration to 0 when starting the break
+          setBreakDuration(0);
         })
         .catch(error => {
           console.error('Error updating break data:', error);
@@ -121,7 +123,7 @@ const CheckModal = ({visible, onClose}) => {
   const continueTimer = useCallback(() => {
     setIsOnBreak(false);
     setTimerStarted(true);
-    const resumeStart = Date.now() - (elapsedTime + breakDuration) * 1000;
+    const resumeStart = Date.now() - elapsedTime * 1000;
     const id = setInterval(() => {
       setElapsedTime(Math.floor((Date.now() - resumeStart) / 1000));
     }, 1000);
@@ -142,9 +144,20 @@ const CheckModal = ({visible, onClose}) => {
             );
 
             if (existingBreakIndex !== -1) {
+              const breakStart = new Date(
+                breaks[existingBreakIndex].breakStartTime,
+              );
+              const breakEnd = new Date();
+
+              const breakDurationInSeconds = Math.floor(
+                (breakEnd - breakStart) / 1000,
+              );
+              setBreakDuration(breakDurationInSeconds);
+
               breaks[existingBreakIndex] = {
                 ...breaks[existingBreakIndex],
-                breakDuration: breakDuration,
+                breakEndTime: breakEnd.toISOString(),
+                breakDuration: breakDurationInSeconds,
               };
 
               firestore()
@@ -155,7 +168,7 @@ const CheckModal = ({visible, onClose}) => {
                   status: 'active',
                 })
                 .then(() => {
-                  console.log('Break updated successfully');
+                  console.log('Break updated successfully with duration');
                 })
                 .catch(error => {
                   console.error('Error updating break:', error);
@@ -164,10 +177,10 @@ const CheckModal = ({visible, onClose}) => {
           }
         })
         .catch(error => {
-          console.error('Error updating break duration:', error);
+          console.error('Error updating break end time and duration:', error);
         });
     }
-  }, [elapsedTime, breakDuration, checkInDocId, breakStartTime]);
+  }, [elapsedTime, checkInDocId, breakStartTime]);
 
   const handleCheckOut = useCallback(() => {
     setShowCheckOutConfirmation(true);
@@ -232,7 +245,6 @@ const CheckModal = ({visible, onClose}) => {
 
       if (!snapshot.empty) {
         const lastCheckIn = snapshot.docs[0].data();
-
         if (!lastCheckIn.endTime) {
           const startTime = new Date(lastCheckIn.startTime).getTime();
           const elapsed = Math.floor((Date.now() - startTime) / 1000);
