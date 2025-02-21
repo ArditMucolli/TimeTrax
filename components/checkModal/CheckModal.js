@@ -91,7 +91,6 @@ const CheckModal = ({visible, onClose}) => {
           clearInterval(intervalId);
           setIntervalId(null);
           setTimerStarted(false);
-          // Set break duration to 0 when starting the break
           setBreakDuration(0);
         })
         .catch(error => {
